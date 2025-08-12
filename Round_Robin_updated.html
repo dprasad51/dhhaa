@@ -1,0 +1,2485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badminton Tournament Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --secondary: #8338ec;
+            --accent: #ff006e;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #06d6a0;
+            --warning: #ffbe0b;
+            --danger: #ef476f;
+            --text: #e9ecef;
+            --text-light: #adb5bd;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --card-bg: #2b2d42;
+            --card-border: #3a3f58;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .central-nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 50px;
+            padding: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            z-index: 1000;
+        }
+        
+        .central-nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        
+        .central-nav a:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .central-nav .active {
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 5px 15px rgba(58, 134, 255, 0.4);
+        }
+
+        .container {
+            padding: 100px 2rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .header-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header p {
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.8;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        .card-body {
+            padding: 2rem;
+            color: var(--text);
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -1rem;
+        }
+        
+        .form-group {
+            flex: 1 0 calc(33.333% - 2rem);
+            margin: 0 1rem 1.5rem;
+            min-width: 250px;
+        }
+        
+        .form-group.full-width {
+            flex: 1 0 calc(100% - 2rem);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: var(--text);
+        }
+        
+        select option {
+            background-color: var(--card-bg);
+            color: var(--text);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(255, 0, 110, 0.2);
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #05b58c;
+            transform: translateY(-2px);
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: var(--dark);
+        }
+        
+        .btn-warning:hover {
+            background: #e6a908;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #d33a5a;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #495057;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #343a40;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .tab-container {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        .tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+            color: var(--text-light);
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .player-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary);
+        }
+        
+        .player-photo {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        .player-details {
+            padding: 1.5rem;
+        }
+        
+        .player-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        
+        .player-info {
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+        
+        .player-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--card-border);
+        }
+        
+        .no-content {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: linear-gradient(to right, var(--primary), var(--secondary)) !important;
+            color: white !important;
+            padding: 1rem;
+            text-align: left;
+        }
+        
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+        }
+        
+        .winner {
+            font-weight: bold;
+            color: var(--success);
+        }
+        
+        .match-score {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .match-score input {
+            width: 50px;
+            text-align: center;
+            padding: 0.5rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card h3 {
+            font-size: 1rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        .player-search-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 0 0 8px 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+        
+        .search-result-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.2s;
+        }
+        
+        .search-result-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .search-result-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--card-border);
+        }
+        
+        .photo-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem;
+            border: 2px dashed var(--card-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        .photo-upload:hover {
+            border-color: var(--accent);
+            background: rgba(255, 0, 110, 0.05);
+        }
+        
+        .photo-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--card-border);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .photo-upload-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .camera-preview {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        #camera-video {
+            width: 100%;
+            max-width: 400px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+        }
+        
+        .camera-controls {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .bracket {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+        }
+        
+        .round {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            min-width: 250px;
+            margin: 0 1rem;
+        }
+        
+        .match {
+            position: relative;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border: 1px solid var(--card-border);
+        }
+        
+        .match::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            width: 20px;
+            height: 2px;
+            background: var(--primary);
+        }
+        
+        .round:last-child .match::after {
+            display: none;
+        }
+        
+        .connector {
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            width: 20px;
+            height: 2px;
+            background: var(--primary);
+        }
+        
+        .connector-down {
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            width: 2px;
+            height: 50%;
+            background: var(--primary);
+        }
+        
+        .player {
+            padding: 0.5rem;
+            margin: 0.25rem 0;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .player.winner {
+            background: rgba(6, 214, 160, 0.2);
+            font-weight: bold;
+        }
+        
+        .player-score {
+            position: absolute;
+            right: 0.5rem;
+            color: var(--text-light);
+        }
+        
+        .round-title {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+        
+        .final-title {
+            color: var(--accent);
+            font-size: 1.1em;
+        }
+        
+        .tournament-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .tournament-meta .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .data-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .player-stats-container {
+            padding: 1.5rem;
+        }
+        
+        .player-stats-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .player-stats-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary);
+        }
+        
+        .player-stats-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .player-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .player-match-history {
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .form-group {
+                flex: 1 0 calc(50% - 2rem);
+            }
+            
+            .players-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .player-stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .match-score {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .data-actions {
+                flex-direction: column;
+            }
+            
+            .tournament-meta {
+                flex-direction: column;
+            }
+            
+            .photo-upload-options {
+                flex-direction: column;
+            }
+            
+            .player-stats-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .bracket {
+                flex-direction: column;
+                overflow-x: visible;
+            }
+            
+            .round {
+                min-width: 100%;
+                margin-bottom: 1.5rem;
+            }
+            
+            .match::after {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .form-group {
+                flex: 1 0 calc(100% - 2rem);
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+  
+
+    <div class="container">
+        <div class="header">
+            <h1 class="header-title">Badminton Tournament Manager</h1>
+            <p>Organize and manage your badminton tournaments</p>
+        </div>
+        
+        <div class="tab-container">
+            <div class="tab active" data-tab="tournament">Tournament</div>
+            <div class="tab" data-tab="players-database">Players Database</div>
+            <div class="tab" data-tab="player-stats" style="display:none;" id="stats-tab">Player Stats</div>
+        </div>
+        
+        <!-- Tournament Tab -->
+        <div class="tab-content active" id="tournament-tab">
+            <div class="card">
+                <div class="card-header">
+                    Tournament Setup
+                </div>
+                <div class="card-body">
+                    <div class="tournament-meta">
+                        <div class="form-group">
+                            <label for="tournament-name">Tournament Name</label>
+                            <input type="text" id="tournament-name" placeholder="Enter tournament name">
+                        </div>
+                        <div class="form-group">
+                            <label for="tournament-date">Date</label>
+                            <input type="date" id="tournament-date">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="player-search">Search Players</label>
+                        <div class="player-search-container">
+                            <input type="text" id="player-search" placeholder="Search players by name" class="search-input">
+                            <div class="search-results" id="search-results"></div>
+                        </div>
+                        <div class="photo-upload" id="player-form" style="display: none; margin-top: 1rem;">
+                            <img id="photo-preview" class="photo-preview" src="https://via.placeholder.com/120" alt="Preview">
+                            <div class="photo-upload-options">
+                                <button type="button" id="upload-file-btn" class="btn btn-secondary">
+                                    <i class="fas fa-upload"></i> Upload Photo
+                                </button>
+                                <button type="button" id="open-camera-btn" class="btn btn-secondary">
+                                    <i class="fas fa-camera"></i> Take Photo
+                                </button>
+                            </div>
+                            <input type="file" id="player-photo" accept="image/*" style="display: none;">
+                            
+                            <div class="camera-preview" id="camera-preview">
+                                <video id="camera-video" autoplay playsinline></video>
+                                <canvas id="camera-canvas"></canvas>
+                                <div class="camera-controls">
+                                    <button type="button" id="capture-btn" class="btn btn-success">
+                                        <i class="fas fa-camera"></i> Capture
+                                    </button>
+                                    <button type="button" id="cancel-camera-btn" class="btn btn-danger">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin-top: 1rem;">
+                                <label for="new-player-name">Player Name</label>
+                                <input type="text" id="new-player-name" placeholder="Enter player name">
+                            </div>
+                            
+                            <button type="button" id="add-new-player" class="btn btn-primary" style="margin-top: 1rem;">
+                                <i class="fas fa-plus"></i> Add New Player
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="data-actions">
+                        <button id="generate-matches" class="btn btn-primary">
+                            <i class="fas fa-calendar-alt"></i> Generate Schedule
+                        </button>
+                        <button id="generate-knockout" class="btn btn-primary">
+                            <i class="fas fa-sitemap"></i> Generate Knockout
+                        </button>
+                        <button id="save-data" class="btn btn-success">
+                            <i class="fas fa-save"></i> Save Tournament
+                        </button>
+                        <button id="save-file" class="btn btn-success">
+                            <i class="fas fa-file-export"></i> Save to File
+                        </button>
+                        <button id="load-file" class="btn btn-warning">
+                            <i class="fas fa-file-import"></i> Load from File
+                        </button>
+                        <button id="export-json" class="btn btn-secondary">
+                            <i class="fas fa-file-code"></i> Export JSON
+                        </button>
+                        <button id="export-csv" class="btn btn-secondary">
+                            <i class="fas fa-file-csv"></i> Export CSV
+                        </button>
+                        <button id="clear-data" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Clear All
+                        </button>
+                    </div>
+                    <div id="file-handle-info" class="file-handle-info" style="display: none; color: var(--text-light); font-size: 0.9rem; margin-top: 0.5rem;">
+                        Currently working with: <span id="current-filename">No file selected</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    Tournament Players (<span id="players-count">0</span>)
+                </div>
+                <div class="card-body">
+                    <div id="players-container" class="players-grid">
+                        <div class="no-content">
+                            <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p>No players added yet. Search or add players to begin.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    Match Schedule
+                </div>
+                <div class="card-body">
+                    <div class="bracket-controls" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <button id="view-round-robin" class="btn btn-secondary active">
+                            <i class="fas fa-list"></i> Round Robin
+                        </button>
+                        <button id="view-knockout" class="btn btn-secondary">
+                            <i class="fas fa-sitemap"></i> Knockout Bracket
+                        </button>
+                    </div>
+                    
+                    <div id="schedule-container">
+                        <div id="no-schedule-message" class="no-content">
+                            <i class="fas fa-calendar-alt" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p>Generate schedule after adding players.</p>
+                        </div>
+                        
+                        <table id="matches-table" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>Match</th>
+                                    <th>Player 1</th>
+                                    <th>Player 2</th>
+                                    <th>Score</th>
+                                    <th>Winner</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="matches-body">
+                                <!-- Matches will be added here dynamically -->
+                            </tbody>
+                        </table>
+                        
+                        <div id="knockout-bracket" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    Tournament Statistics
+                </div>
+                <div class="card-body">
+                    <div id="stats-container">
+                        <div id="no-stats-message" class="no-content">
+                            <i class="fas fa-chart-bar" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p>Complete matches to see statistics.</p>
+                        </div>
+                        
+                        <div id="stats-content" style="display: none;">
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <h3>Standings</h3>
+                                    <table id="standings-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Rank</th>
+                                                <th>Player</th>
+                                                <th>Wins</th>
+                                                <th>Losses</th>
+                                                <th>Points</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="standings-body">
+                                            <!-- Standings will be added here dynamically -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="stat-card">
+                                    <h3>Match Results</h3>
+                                    <table id="results-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Player</th>
+                                                <th>W</th>
+                                                <th>L</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="results-body">
+                                            <!-- Results will be added here dynamically -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="stat-card">
+                                    <h3>Head-to-Head</h3>
+                                    <table id="head-to-head-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Players</th>
+                                                <th>Winner</th>
+                                                <th>Score</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="head-to-head-body">
+                                            <!-- Head-to-head will be added here dynamically -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Players Database Tab -->
+        <div class="tab-content" id="players-database-tab">
+            <div class="card">
+                <div class="card-header">
+                    All Players (<span id="all-players-count">0</span>)
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <input type="text" id="database-player-search" placeholder="Search players by name" class="search-input">
+                    </div>
+                    
+                    <div id="all-players-container" class="players-grid">
+                        <!-- All players will be listed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Player Stats Tab -->
+        <div class="tab-content" id="player-stats-tab">
+            <div class="card">
+                <div class="card-header">
+                    Player Statistics
+                </div>
+                <div class="card-body">
+                    <div class="player-stats-container">
+                        <div class="player-stats-header">
+                            <img id="stats-player-photo" class="player-stats-photo" src="https://via.placeholder.com/100" alt="Player Photo">
+                            <h2 id="stats-player-name" class="player-stats-name">Player Name</h2>
+                        </div>
+                        
+                        <div class="player-stats-grid">
+                            <div class="stat-card">
+                                <h3>Career Statistics</h3>
+                                <table>
+                                    <tr>
+                                        <td>Total Matches:</td>
+                                        <td id="stats-total-matches">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Matches Won:</td>
+                                        <td id="stats-matches-won">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Matches Lost:</td>
+                                        <td id="stats-matches-lost">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Win Percentage:</td>
+                                        <td id="stats-win-percentage">0%</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <h3>Recent Performance</h3>
+                                <table>
+                                    <tr>
+                                        <td>Last 5 Matches:</td>
+                                        <td id="stats-last-5">0-0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Current Streak:</td>
+                                        <td id="stats-current-streak">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Longest Win Streak:</td>
+                                        <td id="stats-longest-streak">0</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card player-match-history">
+                            <h3>Match History</h3>
+                            <table id="player-match-history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Opponent</th>
+                                        <th>Score</th>
+                                        <th>Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="player-match-history-body">
+                                    <!-- Match history will be added here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <button id="back-to-database" class="btn btn-warning" style="margin-top: 1.5rem;">
+                            <i class="fas fa-arrow-left"></i> Back to Players Database
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize tournament data structure
+            const tournamentData = {
+                name: '',
+                date: new Date().toISOString().split('T')[0],
+                players: [], // Array of {id, name, photo}
+                matches: [],
+                knockoutMatches: [], // New array for knockout matches
+                lastSaved: null,
+                playerDatabase: [], // Separate database of all players
+                matchHistory: [] // Stores all matches ever played for stats
+            };
+            
+            // File handle for persistent storage
+            let fileHandle = null;
+            let selectedPhoto = null;
+            let currentStatsPlayer = null;
+            let stream = null;
+            
+            // DOM Elements
+            // Tab elements
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const statsTab = document.getElementById('stats-tab');
+            
+            // Tournament tab elements
+            const playerSearchInput = document.getElementById('player-search');
+            const searchResults = document.getElementById('search-results');
+            const playerForm = document.getElementById('player-form');
+            const newPlayerName = document.getElementById('new-player-name');
+            const photoPreview = document.getElementById('photo-preview');
+            const uploadFileBtn = document.getElementById('upload-file-btn');
+            const openCameraBtn = document.getElementById('open-camera-btn');
+            const playerPhotoInput = document.getElementById('player-photo');
+            const cameraPreview = document.getElementById('camera-preview');
+            const cameraVideo = document.getElementById('camera-video');
+            const cameraCanvas = document.getElementById('camera-canvas');
+            const captureBtn = document.getElementById('capture-btn');
+            const cancelCameraBtn = document.getElementById('cancel-camera-btn');
+            const addNewPlayerBtn = document.getElementById('add-new-player');
+            const tournamentNameInput = document.getElementById('tournament-name');
+            const tournamentDateInput = document.getElementById('tournament-date');
+            const playersContainer = document.getElementById('players-container');
+            const noPlayersMessage = document.getElementById('no-players-message');
+            const playersCount = document.getElementById('players-count');
+            const generateMatchesBtn = document.getElementById('generate-matches');
+            const generateKnockoutBtn = document.getElementById('generate-knockout');
+            const saveDataBtn = document.getElementById('save-data');
+            const saveFileBtn = document.getElementById('save-file');
+            const loadFileBtn = document.getElementById('load-file');
+            const exportJsonBtn = document.getElementById('export-json');
+            const exportCsvBtn = document.getElementById('export-csv');
+            const clearDataBtn = document.getElementById('clear-data');
+            const scheduleContainer = document.getElementById('schedule-container');
+            const noScheduleMessage = document.getElementById('no-schedule-message');
+            const matchesTable = document.getElementById('matches-table');
+            const matchesBody = document.getElementById('matches-body');
+            const knockoutBracket = document.getElementById('knockout-bracket');
+            const statsContent = document.getElementById('stats-content');
+            const noStatsMessage = document.getElementById('no-stats-message');
+            const standingsBody = document.getElementById('standings-body');
+            const resultsBody = document.getElementById('results-body');
+            const headToHeadBody = document.getElementById('head-to-head-body');
+            const fileHandleInfo = document.getElementById('file-handle-info');
+            const currentFilename = document.getElementById('current-filename');
+            const viewRoundRobinBtn = document.getElementById('view-round-robin');
+            const viewKnockoutBtn = document.getElementById('view-knockout');
+            
+            // Players database tab elements
+            const allPlayersContainer = document.getElementById('all-players-container');
+            const allPlayersCount = document.getElementById('all-players-count');
+            const databasePlayerSearch = document.getElementById('database-player-search');
+            
+            // Player stats tab elements
+            const statsPlayerPhoto = document.getElementById('stats-player-photo');
+            const statsPlayerName = document.getElementById('stats-player-name');
+            const statsTotalMatches = document.getElementById('stats-total-matches');
+            const statsMatchesWon = document.getElementById('stats-matches-won');
+            const statsMatchesLost = document.getElementById('stats-matches-lost');
+            const statsWinPercentage = document.getElementById('stats-win-percentage');
+            const statsLast5 = document.getElementById('stats-last-5');
+            const statsCurrentStreak = document.getElementById('stats-current-streak');
+            const statsLongestStreak = document.getElementById('stats-longest-streak');
+            const playerMatchHistoryBody = document.getElementById('player-match-history-body');
+            const backToDatabaseBtn = document.getElementById('back-to-database');
+            
+            // Set current date as default
+            tournamentDateInput.value = tournamentData.date;
+            
+            // Load saved data if available
+            loadSavedData();
+            
+            // Initialize player database with some sample players
+            initializePlayerDatabase();
+            
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab') + '-tab';
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // If switching to players database, render all players
+                    if (tab.getAttribute('data-tab') === 'players-database') {
+                        renderAllPlayers();
+                    }
+                });
+            });
+            
+            // Back to database button
+            backToDatabaseBtn.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                document.querySelector('.tab[data-tab="players-database"]').classList.add('active');
+                document.getElementById('players-database-tab').classList.add('active');
+                statsTab.style.display = 'none';
+            });
+            
+            // Event listeners
+            playerSearchInput.addEventListener('input', handlePlayerSearch);
+            uploadFileBtn.addEventListener('click', () => playerPhotoInput.click());
+            playerPhotoInput.addEventListener('change', handlePhotoUpload);
+            openCameraBtn.addEventListener('click', openCamera);
+            captureBtn.addEventListener('click', capturePhoto);
+            cancelCameraBtn.addEventListener('click', closeCamera);
+            addNewPlayerBtn.addEventListener('click', addNewPlayer);
+            generateMatchesBtn.addEventListener('click', generateMatches);
+            generateKnockoutBtn.addEventListener('click', generateKnockoutMatches);
+            saveDataBtn.addEventListener('click', saveToLocalStorage);
+            saveFileBtn.addEventListener('click', saveToFile);
+            loadFileBtn.addEventListener('click', loadFromFile);
+            exportJsonBtn.addEventListener('click', exportAsJson);
+            exportCsvBtn.addEventListener('click', exportAsCsv);
+            clearDataBtn.addEventListener('click', clearAllData);
+            databasePlayerSearch.addEventListener('input', filterAllPlayers);
+            viewRoundRobinBtn.addEventListener('click', showRoundRobinView);
+            viewKnockoutBtn.addEventListener('click', showKnockoutView);
+            
+            // Close camera when clicking outside
+            document.addEventListener('click', function(e) {
+                if (cameraPreview.style.display === 'flex' && 
+                    !cameraPreview.contains(e.target) && 
+                    e.target !== openCameraBtn) {
+                    closeCamera();
+                }
+            });
+            
+            // Initialize player database with sample data
+            function initializePlayerDatabase() {
+                // Try to load from localStorage first
+                const savedPlayers = localStorage.getItem('badmintonPlayerDatabase');
+                const savedMatches = localStorage.getItem('badmintonMatchHistory');
+                
+                if (savedPlayers) {
+                    tournamentData.playerDatabase = JSON.parse(savedPlayers);
+                } else {
+                    // Sample data
+                    tournamentData.playerDatabase = [
+                        { id: '1', name: 'Alex Johnson', photo: 'https://randomuser.me/api/portraits/men/1.jpg' },
+                        { id: '2', name: 'Maria Garcia', photo: 'https://randomuser.me/api/portraits/women/1.jpg' },
+                        { id: '3', name: 'James Smith', photo: 'https://randomuser.me/api/portraits/men/2.jpg' },
+                        { id: '4', name: 'Sarah Williams', photo: 'https://randomuser.me/api/portraits/women/2.jpg' },
+                        { id: '5', name: 'David Brown', photo: 'https://randomuser.me/api/portraits/men/3.jpg' },
+                        { id: '6', name: 'Emily Davis', photo: 'https://randomuser.me/api/portraits/women/3.jpg' }
+                    ];
+                }
+                
+                if (savedMatches) {
+                    tournamentData.matchHistory = JSON.parse(savedMatches);
+                }
+            }
+            
+            // Handle player search
+            function handlePlayerSearch() {
+                const searchTerm = playerSearchInput.value.trim().toLowerCase();
+                if (searchTerm.length < 2) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+                
+                // Filter players not already in the tournament
+                const availablePlayers = tournamentData.playerDatabase.filter(player => 
+                    !tournamentData.players.some(p => p.id === player.id)
+                );
+                
+                const filteredPlayers = availablePlayers.filter(player => 
+                    player.name.toLowerCase().includes(searchTerm)
+                );
+                
+                displaySearchResults(filteredPlayers);
+            }
+            
+            // Display search results
+            function displaySearchResults(players) {
+                searchResults.innerHTML = '';
+                
+                if (players.length === 0) {
+                    // Show option to add new player
+                    const noResultItem = document.createElement('div');
+                    noResultItem.className = 'search-result-item';
+                    noResultItem.textContent = 'No players found. Click to add new player';
+                    noResultItem.addEventListener('click', () => {
+                        showPlayerForm();
+                        searchResults.style.display = 'none';
+                    });
+                    searchResults.appendChild(noResultItem);
+                } else {
+                    players.forEach(player => {
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'search-result-item';
+                        
+                        const photo = document.createElement('img');
+                        photo.className = 'search-result-photo';
+                        photo.src = player.photo;
+                        photo.alt = player.name;
+                        
+                        const name = document.createElement('span');
+                        name.textContent = player.name;
+                        
+                        const viewStatsBtn = document.createElement('button');
+                        viewStatsBtn.textContent = 'Stats';
+                        viewStatsBtn.className = 'btn btn-warning';
+                        viewStatsBtn.style.marginLeft = 'auto';
+                        viewStatsBtn.style.padding = '0.25rem 0.5rem';
+                        viewStatsBtn.style.fontSize = '0.8rem';
+                        viewStatsBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            showPlayerStats(player);
+                        });
+                        
+                        resultItem.appendChild(photo);
+                        resultItem.appendChild(name);
+                        resultItem.appendChild(viewStatsBtn);
+                        
+                        resultItem.addEventListener('click', () => {
+                            addPlayerToTournament(player);
+                            playerSearchInput.value = '';
+                            searchResults.style.display = 'none';
+                        });
+                        
+                        searchResults.appendChild(resultItem);
+                    });
+                }
+                
+                searchResults.style.display = 'block';
+            }
+            
+            // Show the add new player form
+            function showPlayerForm() {
+                playerForm.style.display = 'block';
+                newPlayerName.value = '';
+                photoPreview.src = 'https://via.placeholder.com/120';
+                selectedPhoto = null;
+                playerSearchInput.value = '';
+                searchResults.style.display = 'none';
+            }
+            
+            // Open camera
+            async function openCamera() {
+                try {
+                    // Hide other elements
+                    playerPhotoInput.style.display = 'none';
+                    
+                    // Show camera preview
+                    cameraPreview.style.display = 'flex';
+                    
+                    // Get camera stream
+                    const constraints = {
+                        video: {
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 },
+                            facingMode: 'user' // Use front camera
+                        },
+                        audio: false
+                    };
+                    
+                    stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    cameraVideo.srcObject = stream;
+                } catch (err) {
+                    console.error("Camera error:", err);
+                    alert("Could not access camera: " + err.message);
+                    closeCamera();
+                }
+            }
+            
+            // Capture photo from camera
+            function capturePhoto() {
+                if (!stream) return;
+                
+                const context = cameraCanvas.getContext('2d');
+                
+                // Set canvas dimensions to match video
+                cameraCanvas.width = cameraVideo.videoWidth;
+                cameraCanvas.height = cameraVideo.videoHeight;
+                
+                // Draw current video frame to canvas
+                context.drawImage(cameraVideo, 0, 0, cameraCanvas.width, cameraCanvas.height);
+                
+                // Convert to data URL and set as preview
+                selectedPhoto = cameraCanvas.toDataURL('image/jpeg', 0.8);
+                photoPreview.src = selectedPhoto;
+                
+                // Close camera
+                closeCamera();
+            }
+            
+            // Close camera
+            function closeCamera() {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+                cameraPreview.style.display = 'none';
+                cameraVideo.srcObject = null;
+                playerPhotoInput.style.display = 'none';
+            }
+            
+            // Handle photo upload from file
+            function handlePhotoUpload(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        selectedPhoto = event.target.result;
+                        photoPreview.src = selectedPhoto;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+            
+            // Add new player to database and tournament
+            function addNewPlayer() {
+                const name = newPlayerName.value.trim();
+                if (!name) {
+                    alert('Please enter a player name');
+                    return;
+                }
+                
+                // Generate unique ID
+                const id = Date.now().toString();
+                
+                // Create new player
+                const newPlayer = {
+                    id,
+                    name,
+                    photo: selectedPhoto || 'https://via.placeholder.com/120'
+                };
+                
+                // Add to database
+                tournamentData.playerDatabase.push(newPlayer);
+                savePlayerDatabase();
+                
+                // Add to tournament
+                addPlayerToTournament(newPlayer);
+                
+                // Reset form
+                playerForm.style.display = 'none';
+                playerSearchInput.value = '';
+            }
+            
+            // Add player to tournament
+            function addPlayerToTournament(player) {
+                if (!tournamentData.players.some(p => p.id === player.id)) {
+                    tournamentData.players.push({
+                        id: player.id,
+                        name: player.name,
+                        photo: player.photo
+                    });
+                    renderPlayers();
+                } else {
+                    alert('This player is already in the tournament!');
+                }
+            }
+            
+            // Generate round robin matches
+            function generateMatches() {
+                if (tournamentData.players.length < 2) {
+                    alert('You need at least 2 players to generate matches.');
+                    return;
+                }
+                
+                tournamentData.matches = []; // Clear existing matches
+                
+                // Generate all possible unique match combinations
+                for (let i = 0; i < tournamentData.players.length; i++) {
+                    for (let j = i + 1; j < tournamentData.players.length; j++) {
+                        tournamentData.matches.push({
+                            player1: tournamentData.players[i],
+                            player2: tournamentData.players[j],
+                            score1: null,
+                            score2: null,
+                            winner: null,
+                            completed: false
+                        });
+                    }
+                }
+                
+                renderSchedule();
+                saveToLocalStorage();
+            }
+            
+            // Generate knockout matches
+            function generateKnockoutMatches() {
+                if (tournamentData.players.length < 2) {
+                    alert('You need at least 2 players to generate matches.');
+                    return;
+                }
+
+                // Clear existing knockout matches
+                tournamentData.knockoutMatches = [];
+                
+                // Seed players (simple random shuffle for demo - in real app you might want proper seeding)
+                const seededPlayers = [...tournamentData.players].sort(() => 0.5 - Math.random());
+                
+                // Generate matches for each round
+                let currentRound = seededPlayers;
+                let roundNumber = 1;
+                
+                while (currentRound.length > 1) {
+                    const nextRound = [];
+                    const roundMatches = [];
+                    
+                    for (let i = 0; i < currentRound.length; i += 2) {
+                        if (i + 1 >= currentRound.length) {
+                            // Odd number of players - give bye
+                            nextRound.push(currentRound[i]);
+                            continue;
+                        }
+                        
+                        const match = {
+                            round: roundNumber,
+                            player1: currentRound[i],
+                            player2: currentRound[i + 1],
+                            score1: null,
+                            score2: null,
+                            winner: null,
+                            completed: false
+                        };
+                        
+                        roundMatches.push(match);
+                    }
+                    
+                    tournamentData.knockoutMatches.push(...roundMatches);
+                    currentRound = nextRound;
+                    roundNumber++;
+                }
+                
+                renderKnockoutBracket();
+                saveToLocalStorage();
+            }
+            
+            function renderKnockoutBracket() {
+                knockoutBracket.innerHTML = '';
+                
+                if (tournamentData.knockoutMatches.length === 0) {
+                    knockoutBracket.innerHTML = '<div class="no-content"><i class="fas fa-sitemap" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i><p>No knockout matches generated yet.</p></div>';
+                    return;
+                }
+                
+                // Group matches by round and determine the final round
+                const rounds = {};
+                let finalRound = 1;
+                
+                tournamentData.knockoutMatches.forEach(match => {
+                    if (!rounds[match.round]) {
+                        rounds[match.round] = [];
+                    }
+                    rounds[match.round].push(match);
+                    if (match.round > finalRound) {
+                        finalRound = match.round;
+                    }
+                });
+                
+                // Create bracket container
+                const bracketContainer = document.createElement('div');
+                bracketContainer.className = 'bracket';
+                
+                // Add rounds to bracket
+                for (let roundNum = 1; roundNum <= finalRound; roundNum++) {
+                    const roundDiv = document.createElement('div');
+                    roundDiv.className = 'round';
+                    
+                    const roundTitle = document.createElement('div');
+                    roundTitle.className = roundNum === finalRound ? 'round-title final-title' : 'round-title';
+                    roundTitle.textContent = roundNum === finalRound ? 'Final' : `Round ${roundNum}`;
+                    roundDiv.appendChild(roundTitle);
+                    
+                    if (rounds[roundNum]) {
+                        rounds[roundNum].forEach((match, matchIndex) => {
+                            const matchDiv = document.createElement('div');
+                            matchDiv.className = 'match';
+                            
+                            // Player 1
+                            const player1Div = document.createElement('div');
+                            player1Div.className = `player ${match.winner?.id === match.player1.id ? 'winner' : ''}`;
+                            player1Div.textContent = match.player1.name;
+                            
+                            const player1Score = document.createElement('span');
+                            player1Score.className = 'player-score';
+                            player1Score.textContent = match.score1 !== null ? match.score1 : '';
+                            player1Div.appendChild(player1Score);
+                            
+                            // Player 2
+                            const player2Div = document.createElement('div');
+                            player2Div.className = `player ${match.winner?.id === match.player2.id ? 'winner' : ''}`;
+                            player2Div.textContent = match.player2.name;
+                            
+                            const player2Score = document.createElement('span');
+                            player2Score.className = 'player-score';
+                            player2Score.textContent = match.score2 !== null ? match.score2 : '';
+                            player2Div.appendChild(player2Score);
+                            
+                            // Edit button
+                            const editBtn = document.createElement('button');
+                            editBtn.className = 'btn btn-warning';
+                            editBtn.textContent = 'Edit Score';
+                            editBtn.style.marginTop = '0.5rem';
+                            editBtn.style.width = '100%';
+                            editBtn.addEventListener('click', () => editKnockoutMatch(match));
+                            
+                            matchDiv.appendChild(player1Div);
+                            matchDiv.appendChild(player2Div);
+                            matchDiv.appendChild(editBtn);
+                            
+                            // Add connectors between rounds
+                            if (roundNum < finalRound) {
+                                const nextRoundMatches = rounds[roundNum + 1] || [];
+                                const nextMatchIndex = Math.floor(matchIndex / 2);
+                                
+                                if (nextRoundMatches[nextMatchIndex]) {
+                                    // Add connector line to next match
+                                    const connector = document.createElement('div');
+                                    connector.className = 'connector';
+                                    
+                                    // Add vertical connector for every other match
+                                    if (matchIndex % 2 === 0) {
+                                        const connectorDown = document.createElement('div');
+                                        connectorDown.className = 'connector-down';
+                                        matchDiv.appendChild(connectorDown);
+                                    }
+                                    
+                                    matchDiv.appendChild(connector);
+                                }
+                            }
+                            
+                            roundDiv.appendChild(matchDiv);
+                        });
+                    }
+                    
+                    bracketContainer.appendChild(roundDiv);
+                }
+                
+                knockoutBracket.appendChild(bracketContainer);
+            }
+            
+            // Edit knockout match
+            function editKnockoutMatch(match) {
+                const score1 = prompt(`Enter score for ${match.player1.name}:`, match.score1 || '');
+                const score2 = prompt(`Enter score for ${match.player2.name}:`, match.score2 || '');
+                
+                if (score1 === null || score2 === null) return;
+                
+                match.score1 = parseInt(score1) || 0;
+                match.score2 = parseInt(score2) || 0;
+                match.completed = true;
+                
+                if (match.score1 > match.score2) {
+                    match.winner = match.player1;
+                } else if (match.score2 > match.score1) {
+                    match.winner = match.player2;
+                }
+                
+                // Add to match history
+                tournamentData.matchHistory.push({
+                    date: tournamentData.date,
+                    player1: match.player1,
+                    player2: match.player2,
+                    score1: match.score1,
+                    score2: match.score2,
+                    winner: match.winner,
+                    isKnockout: true
+                });
+                
+                saveMatchHistory();
+                renderKnockoutBracket();
+                saveToLocalStorage();
+            }
+            
+            // Show round robin view
+            function showRoundRobinView() {
+                viewRoundRobinBtn.classList.add('active');
+                viewKnockoutBtn.classList.remove('active');
+                matchesTable.style.display = tournamentData.matches.length > 0 ? 'table' : 'none';
+                knockoutBracket.style.display = 'none';
+                noScheduleMessage.style.display = tournamentData.matches.length > 0 ? 'none' : 'block';
+            }
+            
+            // Show knockout view
+            function showKnockoutView() {
+                viewKnockoutBtn.classList.add('active');
+                viewRoundRobinBtn.classList.remove('active');
+                matchesTable.style.display = 'none';
+                knockoutBracket.style.display = 'block';
+                noScheduleMessage.style.display = 'none';
+                
+                if (!tournamentData.knockoutMatches || tournamentData.knockoutMatches.length === 0) {
+                    generateKnockoutMatches();
+                } else {
+                    renderKnockoutBracket();
+                }
+            }
+            
+            // Render players in the tournament
+            function renderPlayers() {
+                playersContainer.innerHTML = '';
+                
+                if (tournamentData.players.length === 0) {
+                    playersContainer.innerHTML = `
+                        <div class="no-content">
+                            <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p>No players added yet. Search or add players to begin.</p>
+                        </div>
+                    `;
+                    playersCount.textContent = '0';
+                    return;
+                }
+                
+                playersCount.textContent = tournamentData.players.length;
+                
+                tournamentData.players.forEach(player => {
+                    const playerCard = createPlayerCard(player, true);
+                    playersContainer.appendChild(playerCard);
+                });
+            }
+            
+            // Render all players in the database
+            function renderAllPlayers() {
+                allPlayersContainer.innerHTML = '';
+                
+                if (tournamentData.playerDatabase.length === 0) {
+                    allPlayersContainer.innerHTML = '<div class="no-content"><p>No players in database.</p></div>';
+                    allPlayersCount.textContent = '0';
+                    return;
+                }
+                
+                allPlayersCount.textContent = tournamentData.playerDatabase.length;
+                
+                tournamentData.playerDatabase.forEach(player => {
+                    const playerCard = createPlayerCard(player, false);
+                    allPlayersContainer.appendChild(playerCard);
+                });
+            }
+            
+            // Filter all players in the database
+            function filterAllPlayers() {
+                const searchTerm = databasePlayerSearch.value.trim().toLowerCase();
+                
+                if (searchTerm === '') {
+                    renderAllPlayers();
+                    return;
+                }
+                
+                const filteredPlayers = tournamentData.playerDatabase.filter(player => 
+                    player.name.toLowerCase().includes(searchTerm)
+                );
+                
+                allPlayersContainer.innerHTML = '';
+                
+                if (filteredPlayers.length === 0) {
+                    allPlayersContainer.innerHTML = '<div class="no-content"><p>No matching players found.</p></div>';
+                    return;
+                }
+                
+                filteredPlayers.forEach(player => {
+                    const playerCard = createPlayerCard(player, false);
+                    allPlayersContainer.appendChild(playerCard);
+                });
+            }
+            
+            // Create a player card element
+            function createPlayerCard(player, isTournamentPlayer) {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'player-card';
+                
+                const photo = document.createElement('img');
+                photo.className = 'player-photo';
+                photo.src = player.photo;
+                photo.alt = player.name;
+                
+                const name = document.createElement('div');
+                name.className = 'player-name';
+                name.textContent = player.name;
+                
+                const actions = document.createElement('div');
+                actions.className = 'player-actions';
+                
+                if (isTournamentPlayer) {
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'btn btn-danger';
+                    removeBtn.innerHTML = '<i class="fas fa-times"></i> Remove';
+                    removeBtn.addEventListener('click', () => removePlayerFromTournament(player.id));
+                    
+                    actions.appendChild(removeBtn);
+                } else {
+                    const statsBtn = document.createElement('button');
+                    statsBtn.className = 'btn btn-warning';
+                    statsBtn.innerHTML = '<i class="fas fa-chart-bar"></i> Stats';
+                    statsBtn.addEventListener('click', () => showPlayerStats(player));
+                    
+                    const addBtn = document.createElement('button');
+                    addBtn.className = 'btn btn-success';
+                    addBtn.innerHTML = '<i class="fas fa-plus"></i> Add';
+                    addBtn.addEventListener('click', () => addPlayerToTournament(player));
+                    
+                    actions.appendChild(statsBtn);
+                    actions.appendChild(addBtn);
+                }
+                
+                playerCard.appendChild(photo);
+                playerCard.appendChild(name);
+                playerCard.appendChild(actions);
+                
+                return playerCard;
+            }
+            
+            // Remove player from tournament
+            function removePlayerFromTournament(playerId) {
+                if (confirm('Remove this player from the tournament?')) {
+                    tournamentData.players = tournamentData.players.filter(p => p.id !== playerId);
+                    
+                    // Also remove any matches involving this player
+                    tournamentData.matches = tournamentData.matches.filter(m => 
+                        m.player1.id !== playerId && m.player2.id !== playerId
+                    );
+                    
+                    tournamentData.knockoutMatches = tournamentData.knockoutMatches.filter(m => 
+                        m.player1.id !== playerId && m.player2.id !== playerId
+                    );
+                    
+                    renderPlayers();
+                    renderSchedule();
+                    renderKnockoutBracket();
+                    saveToLocalStorage();
+                }
+            }
+            
+            // Render match schedule
+            function renderSchedule() {
+                if (tournamentData.matches.length === 0) {
+                    noScheduleMessage.style.display = 'block';
+                    matchesTable.style.display = 'none';
+                    return;
+                }
+                
+                noScheduleMessage.style.display = 'none';
+                matchesTable.style.display = 'table';
+                matchesBody.innerHTML = '';
+                
+                tournamentData.matches.forEach((match, index) => {
+                    const row = document.createElement('tr');
+                    
+                    // Match number
+                    const matchNumCell = document.createElement('td');
+                    matchNumCell.textContent = index + 1;
+                    
+                    // Player 1
+                    const player1Cell = document.createElement('td');
+                    player1Cell.textContent = match.player1.name;
+                    
+                    // Player 2
+                    const player2Cell = document.createElement('td');
+                    player2Cell.textContent = match.player2.name;
+                    
+                    // Score
+                    const scoreCell = document.createElement('td');
+                    const scoreDiv = document.createElement('div');
+                    scoreDiv.className = 'match-score';
+                    
+                    const score1Input = document.createElement('input');
+                    score1Input.type = 'number';
+                    score1Input.min = '0';
+                    score1Input.value = match.score1 || '';
+                    score1Input.addEventListener('change', () => updateMatchScore(index, score1Input, score2Input));
+                    
+                    const scoreSeparator = document.createElement('span');
+                    scoreSeparator.textContent = '-';
+                    
+                    const score2Input = document.createElement('input');
+                    score2Input.type = 'number';
+                    score2Input.min = '0';
+                    score2Input.value = match.score2 || '';
+                    score2Input.addEventListener('change', () => updateMatchScore(index, score1Input, score2Input));
+                    
+                    scoreDiv.appendChild(score1Input);
+                    scoreDiv.appendChild(scoreSeparator);
+                    scoreDiv.appendChild(score2Input);
+                    scoreCell.appendChild(scoreDiv);
+                    
+                    // Winner
+                    const winnerCell = document.createElement('td');
+                    if (match.winner) {
+                        winnerCell.textContent = match.winner.name;
+                        winnerCell.className = 'winner';
+                    }
+                    
+                    // Actions
+                    const actionsCell = document.createElement('td');
+                    const completeBtn = document.createElement('button');
+                    completeBtn.className = 'btn btn-success';
+                    completeBtn.innerHTML = match.completed ? '<i class="fas fa-edit"></i> Edit' : '<i class="fas fa-check"></i> Complete';
+                    completeBtn.addEventListener('click', () => completeMatch(index, score1Input.value, score2Input.value));
+                    
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'btn btn-danger';
+                    deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Delete';
+                    deleteBtn.addEventListener('click', () => deleteMatch(index));
+                    
+                    actionsCell.appendChild(completeBtn);
+                    actionsCell.appendChild(deleteBtn);
+                    
+                    row.appendChild(matchNumCell);
+                    row.appendChild(player1Cell);
+                    row.appendChild(player2Cell);
+                    row.appendChild(scoreCell);
+                    row.appendChild(winnerCell);
+                    row.appendChild(actionsCell);
+                    
+                    matchesBody.appendChild(row);
+                });
+                
+                updateStats();
+            }
+            
+            // Update match score
+            function updateMatchScore(matchIndex, score1Input, score2Input) {
+                const score1 = parseInt(score1Input.value) || 0;
+                const score2 = parseInt(score2Input.value) || 0;
+                
+                tournamentData.matches[matchIndex].score1 = score1;
+                tournamentData.matches[matchIndex].score2 = score2;
+                
+                // Auto-determine winner if both scores are entered
+                if (score1 > 0 || score2 > 0) {
+                    if (score1 > score2) {
+                        tournamentData.matches[matchIndex].winner = tournamentData.matches[matchIndex].player1;
+                    } else if (score2 > score1) {
+                        tournamentData.matches[matchIndex].winner = tournamentData.matches[matchIndex].player2;
+                    } else {
+                        tournamentData.matches[matchIndex].winner = null;
+                    }
+                } else {
+                    tournamentData.matches[matchIndex].winner = null;
+                }
+                
+                renderSchedule();
+            }
+            
+            // Complete a match
+            function completeMatch(matchIndex, score1, score2) {
+                const match = tournamentData.matches[matchIndex];
+                
+                if (!score1 && !score2) {
+                    alert('Please enter scores for both players');
+                    return;
+                }
+                
+                match.score1 = parseInt(score1) || 0;
+                match.score2 = parseInt(score2) || 0;
+                match.completed = true;
+                
+                if (match.score1 > match.score2) {
+                    match.winner = match.player1;
+                } else if (match.score2 > match.score1) {
+                    match.winner = match.player2;
+                }
+                
+                // Add to match history
+                tournamentData.matchHistory.push({
+                    date: tournamentData.date,
+                    player1: match.player1,
+                    player2: match.player2,
+                    score1: match.score1,
+                    score2: match.score2,
+                    winner: match.winner,
+                    isKnockout: false
+                });
+                
+                saveMatchHistory();
+                renderSchedule();
+                saveToLocalStorage();
+            }
+            
+            // Delete a match
+            function deleteMatch(matchIndex) {
+                if (confirm('Delete this match?')) {
+                    tournamentData.matches.splice(matchIndex, 1);
+                    renderSchedule();
+                    saveToLocalStorage();
+                }
+            }
+            
+            // Update tournament statistics
+            function updateStats() {
+                if ((tournamentData.matches.length === 0 || 
+                    tournamentData.matches.every(m => !m.completed)) &&
+                    (tournamentData.knockoutMatches.length === 0 ||
+                    tournamentData.knockoutMatches.every(m => !m.completed))) {
+                    noStatsMessage.style.display = 'block';
+                    statsContent.style.display = 'none';
+                    return;
+                }
+                
+                noStatsMessage.style.display = 'none';
+                statsContent.style.display = 'block';
+                
+                // Calculate standings
+                const standings = {};
+                
+                tournamentData.players.forEach(player => {
+                    standings[player.id] = {
+                        player,
+                        wins: 0,
+                        losses: 0,
+                        points: 0
+                    };
+                });
+                
+                // Process completed matches
+                tournamentData.matches.filter(m => m.completed).forEach(match => {
+                    if (match.winner) {
+                        standings[match.winner.id].wins++;
+                        standings[match.winner.id].points += 2;
+                        
+                        const loser = match.winner.id === match.player1.id ? match.player2 : match.player1;
+                        standings[loser.id].losses++;
+                        standings[loser.id].points += match.score1 + match.score2 > 39 ? 1 : 0; // Bonus point for close match
+                    }
+                });
+                
+                // Process knockout matches
+                tournamentData.knockoutMatches.filter(m => m.completed).forEach(match => {
+                    if (match.winner) {
+                        standings[match.winner.id].wins++;
+                        standings[match.winner.id].points += 2;
+                        
+                        const loser = match.winner.id === match.player1.id ? match.player2 : match.player1;
+                        standings[loser.id].losses++;
+                    }
+                });
+                
+                // Convert to array and sort
+                const standingsArray = Object.values(standings).sort((a, b) => {
+                    if (b.points !== a.points) return b.points - a.points;
+                    if (b.wins !== a.wins) return b.wins - a.wins;
+                    return a.losses - b.losses;
+                });
+                
+                // Render standings
+                standingsBody.innerHTML = '';
+                standingsArray.forEach((standing, index) => {
+                    const row = document.createElement('tr');
+                    
+                    const rankCell = document.createElement('td');
+                    rankCell.textContent = index + 1;
+                    
+                    const playerCell = document.createElement('td');
+                    playerCell.textContent = standing.player.name;
+                    
+                    const winsCell = document.createElement('td');
+                    winsCell.textContent = standing.wins;
+                    
+                    const lossesCell = document.createElement('td');
+                    lossesCell.textContent = standing.losses;
+                    
+                    const pointsCell = document.createElement('td');
+                    pointsCell.textContent = standing.points;
+                    
+                    row.appendChild(rankCell);
+                    row.appendChild(playerCell);
+                    row.appendChild(winsCell);
+                    row.appendChild(lossesCell);
+                    row.appendChild(pointsCell);
+                    
+                    standingsBody.appendChild(row);
+                });
+                
+                // Render results
+                resultsBody.innerHTML = '';
+                tournamentData.players.forEach(player => {
+                    const row = document.createElement('tr');
+                    
+                    const playerCell = document.createElement('td');
+                    playerCell.textContent = player.name;
+                    
+                    const winsCell = document.createElement('td');
+                    winsCell.textContent = standings[player.id]?.wins || 0;
+                    
+                    const lossesCell = document.createElement('td');
+                    lossesCell.textContent = standings[player.id]?.losses || 0;
+                    
+                    row.appendChild(playerCell);
+                    row.appendChild(winsCell);
+                    row.appendChild(lossesCell);
+                    
+                    resultsBody.appendChild(row);
+                });
+                
+                // Render head-to-head
+                headToHeadBody.innerHTML = '';
+                
+                // Add round robin matches
+                tournamentData.matches.filter(m => m.completed).forEach(match => {
+                    const row = document.createElement('tr');
+                    
+                    const playersCell = document.createElement('td');
+                    playersCell.textContent = `${match.player1.name} vs ${match.player2.name}`;
+                    
+                    const winnerCell = document.createElement('td');
+                    if (match.winner) {
+                        winnerCell.textContent = match.winner.name;
+                        winnerCell.className = 'winner';
+                    } else {
+                        winnerCell.textContent = 'Draw';
+                    }
+                    
+                    const scoreCell = document.createElement('td');
+                    scoreCell.textContent = `${match.score1}-${match.score2}`;
+                    
+                    row.appendChild(playersCell);
+                    row.appendChild(winnerCell);
+                    row.appendChild(scoreCell);
+                    
+                    headToHeadBody.appendChild(row);
+                });
+                
+                // Add knockout matches
+                tournamentData.knockoutMatches.filter(m => m.completed).forEach(match => {
+                    const row = document.createElement('tr');
+                    
+                    const playersCell = document.createElement('td');
+                    playersCell.textContent = `${match.player1.name} vs ${match.player2.name} (KO)`;
+                    
+                    const winnerCell = document.createElement('td');
+                    if (match.winner) {
+                        winnerCell.textContent = match.winner.name;
+                        winnerCell.className = 'winner';
+                    } else {
+                        winnerCell.textContent = 'Draw';
+                    }
+                    
+                    const scoreCell = document.createElement('td');
+                    scoreCell.textContent = `${match.score1}-${match.score2}`;
+                    
+                    row.appendChild(playersCell);
+                    row.appendChild(winnerCell);
+                    row.appendChild(scoreCell);
+                    
+                    headToHeadBody.appendChild(row);
+                });
+            }
+            
+            // Show player statistics
+            function showPlayerStats(player) {
+                currentStatsPlayer = player;
+                
+                // Show stats tab
+                statsTab.style.display = 'block';
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                statsTab.classList.add('active');
+                document.getElementById('player-stats-tab').classList.add('active');
+                
+                // Set player info
+                statsPlayerName.textContent = player.name;
+                statsPlayerPhoto.src = player.photo;
+                
+                // Calculate stats
+                const playerMatches = tournamentData.matchHistory.filter(m => 
+                    m.player1.id === player.id || m.player2.id === player.id
+                );
+                
+                const totalMatches = playerMatches.length;
+                const matchesWon = playerMatches.filter(m => m.winner?.id === player.id).length;
+                const matchesLost = totalMatches - matchesWon;
+                const winPercentage = totalMatches > 0 ? Math.round((matchesWon / totalMatches) * 100) : 0;
+                
+                // Last 5 matches (most recent first)
+                const last5 = playerMatches.slice(-5).reverse();
+                const last5Wins = last5.filter(m => m.winner?.id === player.id).length;
+                const last5Losses = last5.length - last5Wins;
+                
+                // Streaks
+                let currentStreak = 0;
+                let longestStreak = 0;
+                let tempStreak = 0;
+                
+                // Go through matches in chronological order
+                for (let i = 0; i < playerMatches.length; i++) {
+                    if (playerMatches[i].winner?.id === player.id) {
+                        tempStreak++;
+                        if (i === playerMatches.length - 1) {
+                            currentStreak = tempStreak;
+                        }
+                        if (tempStreak > longestStreak) {
+                            longestStreak = tempStreak;
+                        }
+                    } else {
+                        tempStreak = 0;
+                    }
+                }
+                
+                // Update stats display
+                statsTotalMatches.textContent = totalMatches;
+                statsMatchesWon.textContent = matchesWon;
+                statsMatchesLost.textContent = matchesLost;
+                statsWinPercentage.textContent = `${winPercentage}%`;
+                statsLast5.textContent = `${last5Wins}-${last5Losses}`;
+                statsCurrentStreak.textContent = currentStreak;
+                statsLongestStreak.textContent = longestStreak;
+                
+                // Render match history
+                playerMatchHistoryBody.innerHTML = '';
+                
+                if (playerMatches.length === 0) {
+                    const row = document.createElement('tr');
+                    const cell = document.createElement('td');
+                    cell.colSpan = 4;
+                    cell.textContent = 'No match history available';
+                    row.appendChild(cell);
+                    playerMatchHistoryBody.appendChild(row);
+                    return;
+                }
+                
+                // Show most recent first
+                playerMatches.slice().reverse().forEach(match => {
+                    const row = document.createElement('tr');
+                    
+                    const dateCell = document.createElement('td');
+                    dateCell.textContent = match.date;
+                    
+                    const opponentCell = document.createElement('td');
+                    opponentCell.textContent = match.player1.id === player.id ? match.player2.name : match.player1.name;
+                    if (match.isKnockout) {
+                        opponentCell.textContent += ' (KO)';
+                    }
+                    
+                    const scoreCell = document.createElement('td');
+                    if (match.player1.id === player.id) {
+                        scoreCell.textContent = `${match.score1}-${match.score2}`;
+                    } else {
+                        scoreCell.textContent = `${match.score2}-${match.score1}`;
+                    }
+                    
+                    const resultCell = document.createElement('td');
+                    if (!match.winner) {
+                        resultCell.textContent = 'Draw';
+                    } else if (match.winner.id === player.id) {
+                        resultCell.textContent = 'Won';
+                        resultCell.style.color = '#27ae60';
+                        resultCell.style.fontWeight = 'bold';
+                    } else {
+                        resultCell.textContent = 'Lost';
+                        resultCell.style.color = '#e74c3c';
+                    }
+                    
+                    row.appendChild(dateCell);
+                    row.appendChild(opponentCell);
+                    row.appendChild(scoreCell);
+                    row.appendChild(resultCell);
+                    
+                    playerMatchHistoryBody.appendChild(row);
+                });
+            }
+            
+            // Save data to localStorage
+            function saveToLocalStorage() {
+                localStorage.setItem('badmintonTournament', JSON.stringify({
+                    name: tournamentData.name,
+                    date: tournamentData.date,
+                    players: tournamentData.players,
+                    matches: tournamentData.matches,
+                    knockoutMatches: tournamentData.knockoutMatches
+                }));
+                
+                // Also save player database and match history
+                savePlayerDatabase();
+                saveMatchHistory();
+                
+                // Update last saved time
+                tournamentData.lastSaved = new Date().toISOString();
+            }
+            
+            // Save player database to localStorage
+            function savePlayerDatabase() {
+                localStorage.setItem('badmintonPlayerDatabase', JSON.stringify(tournamentData.playerDatabase));
+            }
+            
+            // Save match history to localStorage
+            function saveMatchHistory() {
+                localStorage.setItem('badmintonMatchHistory', JSON.stringify(tournamentData.matchHistory));
+            }
+            
+            // Load saved data from localStorage
+            function loadSavedData() {
+                const savedData = localStorage.getItem('badmintonTournament');
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    tournamentData.name = data.name || '';
+                    tournamentData.date = data.date || new Date().toISOString().split('T')[0];
+                    tournamentData.players = data.players || [];
+                    tournamentData.matches = data.matches || [];
+                    tournamentData.knockoutMatches = data.knockoutMatches || [];
+                    
+                    // Update UI
+                    tournamentNameInput.value = tournamentData.name;
+                    tournamentDateInput.value = tournamentData.date;
+                    renderPlayers();
+                    renderSchedule();
+                    renderKnockoutBracket();
+                }
+            }
+            
+            // Save to file using File System Access API
+            async function saveToFile() {
+                try {
+                    const data = JSON.stringify({
+                        name: tournamentData.name,
+                        date: tournamentData.date,
+                        players: tournamentData.players,
+                        matches: tournamentData.matches,
+                        knockoutMatches: tournamentData.knockoutMatches,
+                        playerDatabase: tournamentData.playerDatabase,
+                        matchHistory: tournamentData.matchHistory
+                    }, null, 2);
+                    
+                    // Create a new file handle or use existing one
+                    if (!fileHandle) {
+                        fileHandle = await window.showSaveFilePicker({
+                            suggestedName: 'badminton-tournament.json',
+                            types: [{
+                                description: 'JSON Files',
+                                accept: { 'application/json': ['.json'] }
+                            }]
+                        });
+                    }
+                    
+                    // Create a FileSystemWritableFileStream to write to
+                    const writableStream = await fileHandle.createWritable();
+                    
+                    // Write the contents of the file to the stream
+                    await writableStream.write(data);
+                    
+                    // Close the file and write the contents to disk
+                    await writableStream.close();
+                    
+                    // Update file info display
+                    fileHandleInfo.style.display = 'block';
+                    currentFilename.textContent = fileHandle.name;
+                    
+                    alert('Tournament saved successfully!');
+                } catch (err) {
+                    console.error('Error saving file:', err);
+                    if (err.name !== 'AbortError') {
+                        alert('Could not save file: ' + err.message);
+                    }
+                }
+            }
+            
+            // Load from file using File System Access API
+            async function loadFromFile() {
+                try {
+                    // Open file picker
+                    [fileHandle] = await window.showOpenFilePicker({
+                        types: [{
+                            description: 'JSON Files',
+                            accept: { 'application/json': ['.json'] }
+                        }]
+                    });
+                    
+                    // Get file contents
+                    const file = await fileHandle.getFile();
+                    const contents = await file.text();
+                    
+                    // Parse JSON
+                    const data = JSON.parse(contents);
+                    
+                    // Update tournament data
+                    tournamentData.name = data.name || '';
+                    tournamentData.date = data.date || new Date().toISOString().split('T')[0];
+                    tournamentData.players = data.players || [];
+                    tournamentData.matches = data.matches || [];
+                    tournamentData.knockoutMatches = data.knockoutMatches || [];
+                    tournamentData.playerDatabase = data.playerDatabase || [];
+                    tournamentData.matchHistory = data.matchHistory || [];
+                    
+                    // Update UI
+                    tournamentNameInput.value = tournamentData.name;
+                    tournamentDateInput.value = tournamentData.date;
+                    renderPlayers();
+                    renderSchedule();
+                    renderKnockoutBracket();
+                    renderAllPlayers();
+                    
+                    // Update file info display
+                    fileHandleInfo.style.display = 'block';
+                    currentFilename.textContent = fileHandle.name;
+                    
+                    // Save to localStorage
+                    saveToLocalStorage();
+                    savePlayerDatabase();
+                    saveMatchHistory();
+                    
+                    alert('Tournament loaded successfully!');
+                } catch (err) {
+                    console.error('Error loading file:', err);
+                    if (err.name !== 'AbortError') {
+                        alert('Could not load file: ' + err.message);
+                    }
+                }
+            }
+            
+            // Export data as JSON
+            function exportAsJson() {
+                const data = JSON.stringify({
+                    name: tournamentData.name,
+                    date: tournamentData.date,
+                    players: tournamentData.players,
+                    matches: tournamentData.matches,
+                    knockoutMatches: tournamentData.knockoutMatches,
+                    playerDatabase: tournamentData.playerDatabase,
+                    matchHistory: tournamentData.matchHistory
+                }, null, 2);
+                
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `badminton-tournament-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+            
+            // Export data as CSV
+            function exportAsCsv() {
+                // Export players
+                let csv = 'Players\n';
+                csv += 'ID,Name\n';
+                tournamentData.players.forEach(player => {
+                    csv += `${player.id},${player.name}\n`;
+                });
+                
+                // Export round robin matches
+                csv += '\nRound Robin Matches\n';
+                csv += 'Player 1,Player 2,Score 1,Score 2,Winner\n';
+                tournamentData.matches.forEach(match => {
+                    csv += `${match.player1.name},${match.player2.name},${match.score1 || ''},${match.score2 || ''},${match.winner?.name || ''}\n`;
+                });
+                
+                // Export knockout matches
+                csv += '\nKnockout Matches\n';
+                csv += 'Round,Player 1,Player 2,Score 1,Score 2,Winner\n';
+                tournamentData.knockoutMatches.forEach(match => {
+                    csv += `${match.round},${match.player1.name},${match.player2.name},${match.score1 || ''},${match.score2 || ''},${match.winner?.name || ''}\n`;
+                });
+                
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `badminton-tournament-${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+            
+            // Clear all data
+            function clearAllData() {
+                if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+                    // Clear tournament data but keep player database and match history
+                    tournamentData.name = '';
+                    tournamentData.date = new Date().toISOString().split('T')[0];
+                    tournamentData.players = [];
+                    tournamentData.matches = [];
+                    tournamentData.knockoutMatches = [];
+                    
+                    // Update UI
+                    tournamentNameInput.value = '';
+                    tournamentDateInput.value = tournamentData.date;
+                    renderPlayers();
+                    renderSchedule();
+                    renderKnockoutBracket();
+                    
+                    // Clear file handle
+                    fileHandle = null;
+                    fileHandleInfo.style.display = 'none';
+                    
+                    // Save to localStorage
+                    saveToLocalStorage();
+                }
+            }
+            
+            // Initialize UI
+            renderPlayers();
+            renderAllPlayers();
+            
+            // Watch for changes in tournament name and date
+            tournamentNameInput.addEventListener('change', () => {
+                tournamentData.name = tournamentNameInput.value;
+                saveToLocalStorage();
+            });
+            
+            tournamentDateInput.addEventListener('change', () => {
+                tournamentData.date = tournamentDateInput.value;
+                saveToLocalStorage();
+            });
+            
+            // Initialize the view
+            showRoundRobinView();
+        });
+    </script>
+</body>
+</html>

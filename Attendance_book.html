@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badminton Players Attendance Book</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --secondary: #8338ec;
+            --accent: #ff006e;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #06d6a0;
+            --warning: #ffbe0b;
+            --danger: #ef476f;
+            --text: #e9ecef;
+            --text-light: #adb5bd;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --bg-dark: #121212;
+            --bg-darker: #0a0a0a;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: var(--text);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .nav-pills .nav-link.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 4px 15px rgba(58, 134, 255, 0.4);
+        }
+        
+        .nav-pills .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+        
+        .nav-pills .nav-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2a75e6;
+            border-color: #2a75e6;
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .form-control, .form-select {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: var(--primary);
+            color: var(--text);
+            box-shadow: 0 0 0 0.25rem rgba(58, 134, 255, 0.25);
+        }
+        
+        .player-tag {
+            background: rgba(58, 134, 255, 0.1);
+            border: 1px solid rgba(58, 134, 255, 0.2);
+            border-radius: 20px;
+            padding: 8px 15px;
+            display: inline-flex;
+            align-items: center;
+            margin: 5px;
+        }
+        
+        .attendance-table {
+            color: var(--text);
+        }
+        
+        .attendance-table th {
+            background-color: rgba(58, 134, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .attendance-table td {
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .attendance-table tr {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+        
+        .attendance-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .status-present {
+            color: var(--success);
+        }
+        
+        .status-absent {
+            color: var(--danger);
+        }
+        
+        .status-late {
+            color: var(--warning);
+        }
+        
+        .calendar-day {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 100px;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .calendar-day:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .calendar-day.today {
+            background-color: rgba(58, 134, 255, 0.2);
+            border-color: var(--primary);
+        }
+        
+        .attendance-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 3px;
+        }
+        
+        .dot-present {
+            background-color: var(--success);
+        }
+        
+        .dot-absent {
+            background-color: var(--danger);
+        }
+        
+        .dot-late {
+            background-color: var(--warning);
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            .calendar-day {
+                min-height: 60px;
+                font-size: 0.8rem;
+            }
+            
+            .player-tag {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+   
+
+    <div class="container py-4">
+        <div class="glass-card p-4 mb-4">
+            <h1 class="text-center mb-4"><i class="fas fa-clipboard-list me-2"></i> Badminton Players Attendance Book</h1>
+            
+            <!-- Tabs Navigation -->
+            <ul class="nav nav-pills mb-4 justify-content-center" id="attendanceTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="players-tab" data-bs-toggle="pill" data-bs-target="#players" type="button">
+                        <i class="fas fa-users me-1"></i> Players
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="attendance-tab" data-bs-toggle="pill" data-bs-target="#attendance" type="button">
+                        <i class="fas fa-calendar-check me-1"></i> Attendance
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="reports-tab" data-bs-toggle="pill" data-bs-target="#reports" type="button">
+                        <i class="fas fa-chart-bar me-1"></i> Reports
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="calendar-tab" data-bs-toggle="pill" data-bs-target="#calendar" type="button">
+                        <i class="fas fa-calendar-alt me-1"></i> Calendar
+                    </button>
+                </li>
+            </ul>
+            
+            <!-- Tab Content -->
+            <div class="tab-content" id="attendanceTabsContent">
+                <!-- Players Tab -->
+                <div class="tab-pane fade show active" id="players" role="tabpanel">
+                    <h2 class="mb-4"><i class="fas fa-users me-2"></i> Manage Players</h2>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <label for="newPlayerName" class="form-label">Player Name:</label>
+                            <input type="text" class="form-control" id="newPlayerName" placeholder="Enter player name">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="newPlayerPhone" class="form-label">Phone Number:</label>
+                            <input type="tel" class="form-control" id="newPlayerPhone" placeholder="Enter phone number">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="newPlayerEmail" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="newPlayerEmail" placeholder="Enter email address">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="newPlayerLevel" class="form-label">Skill Level:</label>
+                            <select class="form-select" id="newPlayerLevel">
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary mb-4" onclick="addPlayer()">
+                        <i class="fas fa-plus me-1"></i> Add Player
+                    </button>
+                    
+                    <div class="input-group mb-4">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" id="playerSearch" placeholder="Search players...">
+                    </div>
+                    
+                    <h3 class="mb-3">Player Roster</h3>
+                    <div id="playersList" class="d-flex flex-wrap">
+                        <!-- Player tags will be added here -->
+                    </div>
+                </div>
+                
+                <!-- Attendance Tab -->
+                <div class="tab-pane fade" id="attendance" role="tabpanel">
+                    <h2 class="mb-4"><i class="fas fa-calendar-check me-2"></i> Record Attendance</h2>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label for="attendanceDate" class="form-label">Date:</label>
+                            <div class="input-group">
+                                <input type="date" class="form-control" id="attendanceDate">
+                                <button class="btn btn-outline-primary" onclick="setToday()">Today</button>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="attendanceSearch" class="form-label">Search:</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="attendanceSearch" placeholder="Search players...">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>Player</th>
+                                    <th>Status</th>
+                                    <th>Time</th>
+                                    <th>Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceList">
+                                <!-- Attendance rows will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Reports Tab -->
+                <div class="tab-pane fade" id="reports" role="tabpanel">
+                    <h2 class="mb-4"><i class="fas fa-chart-bar me-2"></i> Attendance Reports</h2>
+                    
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h3>Total Players</h3>
+                                <div class="value" id="totalPlayers">0</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h3>Present Today</h3>
+                                <div class="value" id="presentToday">0</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h3>Attendance Rate</h3>
+                                <div class="value" id="attendanceRate">0%</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h3>Most Regular Player</h3>
+                                <div class="value" id="regularPlayer">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label for="reportStartDate" class="form-label">Start Date:</label>
+                            <input type="date" class="form-control" id="reportStartDate">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="reportEndDate" class="form-label">End Date:</label>
+                            <input type="date" class="form-control" id="reportEndDate">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" onclick="generateReport()">
+                                <i class="fas fa-chart-pie me-1"></i> Generate Report
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>Player</th>
+                                    <th>Present</th>
+                                    <th>Absent</th>
+                                    <th>Late</th>
+                                    <th>Attendance %</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportData">
+                                <!-- Report data will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Calendar Tab -->
+                <div class="tab-pane fade" id="calendar" role="tabpanel">
+                    <h2 class="mb-4"><i class="fas fa-calendar-alt me-2"></i> Attendance Calendar</h2>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <button class="btn btn-outline-primary" onclick="previousMonth()">
+                            <i class="fas fa-chevron-left me-1"></i> Previous
+                        </button>
+                        <h3 class="mb-0" id="currentMonth">Month Year</h3>
+                        <button class="btn btn-outline-primary" onclick="nextMonth()">
+                            Next <i class="fas fa-chevron-right ms-1"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="row row-cols-7 g-1" id="calendarView">
+                        <!-- Calendar will be generated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Data storage
+        let players = JSON.parse(localStorage.getItem('badmintonPlayers')) || [];
+        let attendanceRecords = JSON.parse(localStorage.getItem('attendanceRecords')) || [];
+        let currentDate = new Date();
+        let currentViewMonth = currentDate.getMonth();
+        let currentViewYear = currentDate.getFullYear();
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set today's date in attendance tab
+            setToday();
+            
+            // Load players list
+            updatePlayersList();
+            
+            // Initialize calendar
+            updateCalendar();
+            
+            // Set up search functionality
+            document.getElementById('playerSearch').addEventListener('input', filterPlayers);
+            document.getElementById('attendanceSearch').addEventListener('input', filterAttendance);
+            
+            // Update reports
+            updateStats();
+            
+            // Load attendance for today
+            loadAttendanceForDate(currentDate);
+        });
+        
+        // Player management functions
+        function addPlayer() {
+            const name = document.getElementById('newPlayerName').value.trim();
+            const phone = document.getElementById('newPlayerPhone').value.trim();
+            const email = document.getElementById('newPlayerEmail').value.trim();
+            const level = document.getElementById('newPlayerLevel').value;
+            
+            if (!name) {
+                alert("Please enter a player name");
+                return;
+            }
+            
+            const newPlayer = {
+                id: Date.now(),
+                name: name,
+                phone: phone,
+                email: email,
+                level: level,
+                joinDate: new Date().toISOString()
+            };
+            
+            players.push(newPlayer);
+            savePlayers();
+            
+            // Clear form
+            document.getElementById('newPlayerName').value = "";
+            document.getElementById('newPlayerPhone').value = "";
+            document.getElementById('newPlayerEmail').value = "";
+            
+            // Update UI
+            updatePlayersList();
+            updateStats();
+        }
+        
+        function updatePlayersList(filter = '') {
+            const playersList = document.getElementById('playersList');
+            playersList.innerHTML = '';
+            
+            const filteredPlayers = filter ? 
+                players.filter(p => p.name.toLowerCase().includes(filter.toLowerCase())) : 
+                players;
+            
+            if (filteredPlayers.length === 0) {
+                playersList.innerHTML = '<p class="text-muted">No players found</p>';
+                return;
+            }
+            
+            filteredPlayers.forEach(player => {
+                const playerTag = document.createElement('div');
+                playerTag.className = 'player-tag';
+                playerTag.innerHTML = `
+                    <span>${player.name} <small class="text-muted">(${player.level})</small></span>
+                    <div class="ms-2">
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editPlayer(${player.id})" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deletePlayer(${player.id})" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                playersList.appendChild(playerTag);
+            });
+        }
+        
+        function editPlayer(playerId) {
+            const player = players.find(p => p.id === playerId);
+            if (!player) return;
+            
+            const newName = prompt("Edit player name:", player.name);
+            if (newName !== null) {
+                player.name = newName.trim();
+                savePlayers();
+                updatePlayersList();
+                updateStats();
+            }
+        }
+        
+        function deletePlayer(playerId) {
+            if (confirm("Are you sure you want to delete this player?")) {
+                players = players.filter(p => p.id !== playerId);
+                savePlayers();
+                updatePlayersList();
+                updateStats();
+            }
+        }
+        
+        function filterPlayers() {
+            const searchTerm = document.getElementById('playerSearch').value;
+            updatePlayersList(searchTerm);
+        }
+        
+        // Attendance functions
+        function setToday() {
+            const today = new Date();
+            const dateStr = today.toISOString().split('T')[0];
+            document.getElementById('attendanceDate').value = dateStr;
+            loadAttendanceForDate(today);
+        }
+        
+        function loadAttendanceForDate(date) {
+            const dateStr = date.toISOString().split('T')[0];
+            const attendanceList = document.getElementById('attendanceList');
+            attendanceList.innerHTML = '';
+            
+            // Get attendance records for this date
+            const dateRecords = attendanceRecords.filter(r => r.date === dateStr);
+            
+            players.forEach(player => {
+                const record = dateRecords.find(r => r.playerId === player.id) || {
+                    playerId: player.id,
+                    status: 'absent',
+                    time: '',
+                    notes: ''
+                };
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${player.name}</td>
+                    <td class="status-${record.status}">${record.status.charAt(0).toUpperCase() + record.status.slice(1)}</td>
+                    <td>${record.time || '-'}</td>
+                    <td>${record.notes || '-'}</td>
+                    <td>
+                        <div class="d-flex flex-wrap gap-1">
+                            <button class="btn btn-sm btn-success" onclick="setAttendanceStatus(${player.id}, 'present', '${dateStr}')">Present</button>
+                            <button class="btn btn-sm btn-danger" onclick="setAttendanceStatus(${player.id}, 'absent', '${dateStr}')">Absent</button>
+                            <button class="btn btn-sm btn-warning" onclick="setAttendanceStatus(${player.id}, 'late', '${dateStr}')">Late</button>
+                            <input type="time" class="form-control form-control-sm" style="width: 100px;" id="time-${player.id}" value="${record.time || ''}" onchange="setAttendanceTime(${player.id}, this.value, '${dateStr}')">
+                            <input type="text" class="form-control form-control-sm" style="width: 120px;" id="notes-${player.id}" value="${record.notes || ''}" placeholder="Notes" onchange="setAttendanceNotes(${player.id}, this.value, '${dateStr}')">
+                        </div>
+                    </td>
+                `;
+                attendanceList.appendChild(row);
+            });
+        }
+        
+        function setAttendanceStatus(playerId, status, dateStr) {
+            // Find or create record
+            let record = attendanceRecords.find(r => 
+                r.playerId === playerId && r.date === dateStr
+            );
+            
+            if (!record) {
+                record = {
+                    playerId: playerId,
+                    date: dateStr,
+                    status: status,
+                    time: status === 'present' ? getCurrentTime() : '',
+                    notes: ''
+                };
+                attendanceRecords.push(record);
+            } else {
+                record.status = status;
+                if (status === 'present' && !record.time) {
+                    record.time = getCurrentTime();
+                }
+            }
+            
+            saveAttendance();
+            loadAttendanceForDate(new Date(dateStr));
+            updateStats();
+        }
+        
+        function setAttendanceTime(playerId, time, dateStr) {
+            let record = attendanceRecords.find(r => 
+                r.playerId === playerId && r.date === dateStr
+            );
+            
+            if (!record) {
+                record = {
+                    playerId: playerId,
+                    date: dateStr,
+                    status: 'present',
+                    time: time,
+                    notes: ''
+                };
+                attendanceRecords.push(record);
+            } else {
+                record.time = time;
+                if (time) {
+                    record.status = 'present';
+                }
+            }
+            
+            saveAttendance();
+            loadAttendanceForDate(new Date(dateStr));
+            updateStats();
+        }
+        
+        function setAttendanceNotes(playerId, notes, dateStr) {
+            let record = attendanceRecords.find(r => 
+                r.playerId === playerId && r.date === dateStr
+            );
+            
+            if (!record) {
+                record = {
+                    playerId: playerId,
+                    date: dateStr,
+                    status: 'absent',
+                    time: '',
+                    notes: notes
+                };
+                attendanceRecords.push(record);
+            } else {
+                record.notes = notes;
+            }
+            
+            saveAttendance();
+        }
+        
+        function filterAttendance() {
+            const searchTerm = document.getElementById('attendanceSearch').value.toLowerCase();
+            const rows = document.getElementById('attendanceList').querySelectorAll('tr');
+            
+            rows.forEach(row => {
+                const name = row.cells[0].textContent.toLowerCase();
+                row.style.display = name.includes(searchTerm) ? '' : 'none';
+            });
+        }
+        
+        function getCurrentTime() {
+            const now = new Date();
+            return now.getHours().toString().padStart(2, '0') + ':' + 
+                   now.getMinutes().toString().padStart(2, '0');
+        }
+        
+        // Reports functions
+        function updateStats() {
+            document.getElementById('totalPlayers').textContent = players.length;
+            
+            // Calculate today's attendance
+            const todayStr = new Date().toISOString().split('T')[0];
+            const todayRecords = attendanceRecords.filter(r => r.date === todayStr);
+            const presentToday = todayRecords.filter(r => r.status === 'present').length;
+            document.getElementById('presentToday').textContent = presentToday;
+            
+            // Calculate overall attendance rate
+            const totalPossible = players.length * attendanceRecords.length;
+            let totalPresent = 0;
+            
+            attendanceRecords.forEach(record => {
+                if (record.status === 'present') totalPresent++;
+            });
+            
+            const attendanceRate = players.length > 0 ? 
+                Math.round((totalPresent / (players.length * attendanceRecords.length || 1)) * 100) : 0;
+            document.getElementById('attendanceRate').textContent = attendanceRate + '%';
+            
+            // Find most regular player
+            if (players.length > 0 && attendanceRecords.length > 0) {
+                const playerAttendance = {};
+                
+                players.forEach(player => {
+                    playerAttendance[player.id] = {
+                        name: player.name,
+                        present: 0,
+                        total: 0
+                    };
+                });
+                
+                attendanceRecords.forEach(record => {
+                    playerAttendance[record.playerId].total++;
+                    if (record.status === 'present') {
+                        playerAttendance[record.playerId].present++;
+                    }
+                });
+                
+                let mostRegular = { name: '-', rate: 0 };
+                Object.values(playerAttendance).forEach(player => {
+                    const rate = player.total > 0 ? (player.present / player.total) * 100 : 0;
+                    if (rate > mostRegular.rate) {
+                        mostRegular = { name: player.name, rate: rate };
+                    }
+                });
+                
+                document.getElementById('regularPlayer').textContent = 
+                    `${mostRegular.name} (${Math.round(mostRegular.rate)}%)`;
+            }
+        }
+        
+        function generateReport() {
+            const startDate = document.getElementById('reportStartDate').value;
+            const endDate = document.getElementById('reportEndDate').value;
+            
+            if (!startDate || !endDate) {
+                alert("Please select both start and end dates");
+                return;
+            }
+            
+            const reportData = document.getElementById('reportData');
+            reportData.innerHTML = '';
+            
+            // Filter records by date range
+            const filteredRecords = attendanceRecords.filter(r => {
+                return r.date >= startDate && r.date <= endDate;
+            });
+            
+            // Calculate attendance for each player
+            const playerStats = {};
+            
+            players.forEach(player => {
+                playerStats[player.id] = {
+                    name: player.name,
+                    present: 0,
+                    absent: 0,
+                    late: 0,
+                    total: 0
+                };
+            });
+            
+            filteredRecords.forEach(record => {
+                playerStats[record.playerId].total++;
+                if (record.status === 'present') playerStats[record.playerId].present++;
+                else if (record.status === 'absent') playerStats[record.playerId].absent++;
+                else if (record.status === 'late') playerStats[record.playerId].late++;
+            });
+            
+            // Add rows to report
+            Object.values(playerStats).forEach(player => {
+                const attendancePercent = player.total > 0 ? 
+                    Math.round((player.present / player.total) * 100) : 0;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${player.name}</td>
+                    <td>${player.present}</td>
+                    <td>${player.absent}</td>
+                    <td>${player.late}</td>
+                    <td>${attendancePercent}%</td>
+                `;
+                reportData.appendChild(row);
+            });
+        }
+        
+        // Calendar functions
+        function updateCalendar() {
+            const calendar = document.getElementById('calendarView');
+            calendar.innerHTML = '';
+            
+            // Set month/year header
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"];
+            document.getElementById('currentMonth').textContent = 
+                `${monthNames[currentViewMonth]} ${currentViewYear}`;
+            
+            // Create calendar headers
+            const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            dayNames.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'col text-center fw-bold py-2';
+                header.textContent = day;
+                calendar.appendChild(header);
+            });
+            
+            // Get first day of month and total days
+            const firstDay = new Date(currentViewYear, currentViewMonth, 1).getDay();
+            const daysInMonth = new Date(currentViewYear, currentViewMonth + 1, 0).getDate();
+            
+            // Add empty cells for days before the first of the month
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day empty';
+                calendar.appendChild(emptyDay);
+            }
+            
+            // Add cells for each day of the month
+            const today = new Date();
+            const isCurrentMonth = currentViewMonth === today.getMonth() && 
+                                  currentViewYear === today.getFullYear();
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'calendar-day col';
+                
+                // Highlight today if it's the current month
+                if (isCurrentMonth && day === today.getDate()) {
+                    dayCell.classList.add('today');
+                }
+                
+                // Add day number
+                const dayNumber = document.createElement('div');
+                dayNumber.className = 'day-number fw-bold';
+                dayNumber.textContent = day;
+                dayCell.appendChild(dayNumber);
+                
+                // Add attendance indicators
+                const dateStr = `${currentViewYear}-${(currentViewMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                const dayRecords = attendanceRecords.filter(r => r.date === dateStr);
+                
+                if (dayRecords.length > 0) {
+                    const presentCount = dayRecords.filter(r => r.status === 'present').length;
+                    const lateCount = dayRecords.filter(r => r.status === 'late').length;
+                    const absentCount = dayRecords.filter(r => r.status === 'absent').length;
+                    
+                    if (presentCount > 0) {
+                        const presentDot = document.createElement('span');
+                        presentDot.className = 'attendance-dot dot-present';
+                        presentDot.title = `${presentCount} present`;
+                        dayCell.appendChild(presentDot);
+                    }
+                    
+                    if (lateCount > 0) {
+                        const lateDot = document.createElement('span');
+                        lateDot.className = 'attendance-dot dot-late';
+                        lateDot.title = `${lateCount} late`;
+                        dayCell.appendChild(lateDot);
+                    }
+                    
+                    if (absentCount > 0) {
+                        const absentDot = document.createElement('span');
+                        absentDot.className = 'attendance-dot dot-absent';
+                        absentDot.title = `${absentCount} absent`;
+                        dayCell.appendChild(absentDot);
+                    }
+                }
+                
+                // Add click event to view attendance
+                dayCell.onclick = () => {
+                    document.getElementById('attendanceDate').value = dateStr;
+                    loadAttendanceForDate(new Date(dateStr));
+                    const tab = new bootstrap.Tab(document.querySelector('#attendance-tab'));
+                    tab.show();
+                };
+                
+                calendar.appendChild(dayCell);
+            }
+        }
+        
+        function previousMonth() {
+            currentViewMonth--;
+            if (currentViewMonth < 0) {
+                currentViewMonth = 11;
+                currentViewYear--;
+            }
+            updateCalendar();
+        }
+        
+        function nextMonth() {
+            currentViewMonth++;
+            if (currentViewMonth > 11) {
+                currentViewMonth = 0;
+                currentViewYear++;
+            }
+            updateCalendar();
+        }
+        
+        // Data persistence
+        function savePlayers() {
+            localStorage.setItem('badmintonPlayers', JSON.stringify(players));
+        }
+        
+        function saveAttendance() {
+            localStorage.setItem('attendanceRecords', JSON.stringify(attendanceRecords));
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badminton Round Robin Tournament</title>
+    <style>
+        :root {
+            --primary-color: #3a7ca5;
+            --secondary-color: #2f6690;
+            --accent-color: #d9dcd6;
+            --light-color: #f8f9fa;
+            --dark-color: #16425b;
+            --highlight-color: #81c3d7;
+        }
+        
+        body {
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--accent-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        
+        h2 {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--highlight-color);
+            padding-bottom: 8px;
+            margin-top: 0;
+        }
+        
+        .tournament-controls {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        input, select, button {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--highlight-color);
+            box-shadow: 0 0 0 3px rgba(129, 195, 215, 0.2);
+        }
+        
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-danger {
+            background-color: #e63946;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c1121f;
+        }
+        
+        .btn-success {
+            background-color: #2a9d8f;
+        }
+        
+        .btn-success:hover {
+            background-color: #21867a;
+        }
+        
+        .btn-warning {
+            background-color: #e9c46a;
+            color: var(--dark-color);
+        }
+        
+        .btn-warning:hover {
+            background-color: #f4a261;
+        }
+        
+        .players-list {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+        
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .player-card {
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--highlight-color);
+            transition: transform 0.3s;
+        }
+        
+        .player-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .schedule {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        th, td {
+            padding: 14px 18px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: #f1f8ff;
+        }
+        
+        .match-score {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .match-score input {
+            width: 60px;
+            text-align: center;
+            padding: 8px;
+        }
+        
+        .stats {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background-color: var(--light-color);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--highlight-color);
+            padding-bottom: 8px;
+        }
+        
+        .winner {
+            font-weight: bold;
+            color: #2a9d8f;
+        }
+        
+        .data-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .data-actions button {
+            width: auto;
+            padding: 12px 18px;
+            font-size: 15px;
+        }
+        
+        .tournament-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+        
+        .tournament-date {
+            font-style: italic;
+            color: #666;
+        }
+        
+        .file-handle-info {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #666;
+            display: none;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-radius: 4px;
+            border-left: 4px solid var(--highlight-color);
+        }
+        
+        @media (max-width: 768px) {
+            .players-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .match-score {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .data-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .data-actions button {
+                width: 100%;
+            }
+            
+            .tournament-meta {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            th, td {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Badminton Round Robin Tournament</h1>
+        </header>
+        
+        <section class="tournament-controls">
+            <div class="tournament-meta">
+                <div class="form-group" style="flex: 1;">
+                    <label for="tournament-name">Tournament Name</label>
+                    <input type="text" id="tournament-name" placeholder="Enter tournament name">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label for="tournament-date">Date</label>
+                    <input type="date" id="tournament-date">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="player-name">Add Player</label>
+                <div style="display: flex; gap: 12px;">
+                    <input type="text" id="player-name" placeholder="Enter player name">
+                    <button id="add-player" style="width: auto;">Add Player</button>
+                </div>
+            </div>
+            <div class="data-actions">
+                <button id="generate-matches">Generate Round Robin Schedule</button>
+                <button id="save-data" class="btn-success">Save Tournament</button>
+                <button id="save-file" class="btn-success">Save to File</button>
+                <button id="load-file" class="btn-warning">Load from File</button>
+                <button id="export-json">Export as JSON</button>
+                <button id="export-csv">Export as CSV</button>
+                <button id="clear-data" class="btn-danger">Clear All Data</button>
+            </div>
+            <div id="file-handle-info" class="file-handle-info">
+                Currently working with: <span id="current-filename">No file selected</span>
+            </div>
+        </section>
+        
+        <section class="players-list">
+            <h2>Players</h2>
+            <div id="players-container" class="players-grid">
+                <!-- Players will be added here dynamically -->
+                <p id="no-players-message">No players added yet. Add players to begin.</p>
+            </div>
+        </section>
+        
+        <section class="schedule">
+            <h2>Match Schedule</h2>
+            <div id="schedule-container">
+                <p id="no-schedule-message">Generate schedule after adding players.</p>
+                <table id="matches-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Match</th>
+                            <th>Player 1</th>
+                            <th>Player 2</th>
+                            <th>Score</th>
+                            <th>Winner</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matches-body">
+                        <!-- Matches will be added here dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <section class="stats">
+            <h2>Tournament Statistics</h2>
+            <div id="stats-container">
+                <p id="no-stats-message">Complete matches to see statistics.</p>
+                <div id="stats-content" style="display: none;">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Standings</h3>
+                            <table id="standings-table">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Player</th>
+                                        <th>Wins</th>
+                                        <th>Losses</th>
+                                        <th>Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="standings-body">
+                                    <!-- Standings will be added here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Match Results</h3>
+                            <table id="results-table">
+                                <thead>
+                                    <tr>
+                                        <th>Player</th>
+                                        <th>W</th>
+                                        <th>L</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="results-body">
+                                    <!-- Results will be added here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Head-to-Head</h3>
+                            <table id="head-to-head-table">
+                                <thead>
+                                    <tr>
+                                        <th>Players</th>
+                                        <th>Winner</th>
+                                        <th>Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="head-to-head-body">
+                                    <!-- Head-to-head will be added here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize tournament data structure
+            const tournamentData = {
+                name: '',
+                date: new Date().toISOString().split('T')[0],
+                players: [],
+                matches: [],
+                lastSaved: null
+            };
+            
+            // File handle for persistent storage
+            let fileHandle = null;
+            
+            // DOM Elements
+            const addPlayerBtn = document.getElementById('add-player');
+            const playerNameInput = document.getElementById('player-name');
+            const tournamentNameInput = document.getElementById('tournament-name');
+            const tournamentDateInput = document.getElementById('tournament-date');
+            const playersContainer = document.getElementById('players-container');
+            const noPlayersMessage = document.getElementById('no-players-message');
+            const generateMatchesBtn = document.getElementById('generate-matches');
+            const saveDataBtn = document.getElementById('save-data');
+            const saveFileBtn = document.getElementById('save-file');
+            const loadFileBtn = document.getElementById('load-file');
+            const exportJsonBtn = document.getElementById('export-json');
+            const exportCsvBtn = document.getElementById('export-csv');
+            const clearDataBtn = document.getElementById('clear-data');
+            const scheduleContainer = document.getElementById('schedule-container');
+            const noScheduleMessage = document.getElementById('no-schedule-message');
+            const matchesTable = document.getElementById('matches-table');
+            const matchesBody = document.getElementById('matches-body');
+            const statsContent = document.getElementById('stats-content');
+            const noStatsMessage = document.getElementById('no-stats-message');
+            const standingsBody = document.getElementById('standings-body');
+            const resultsBody = document.getElementById('results-body');
+            const headToHeadBody = document.getElementById('head-to-head-body');
+            const fileHandleInfo = document.getElementById('file-handle-info');
+            const currentFilename = document.getElementById('current-filename');
+            
+            // Set current date as default
+            tournamentDateInput.value = tournamentData.date;
+            
+            // Load saved data if available
+            loadSavedData();
+            
+            // Add player to the tournament
+            addPlayerBtn.addEventListener('click', function() {
+                const playerName = playerNameInput.value.trim();
+                if (playerName && !tournamentData.players.includes(playerName)) {
+                    tournamentData.players.push(playerName);
+                    playerNameInput.value = '';
+                    renderPlayers();
+                } else if (tournamentData.players.includes(playerName)) {
+                    alert('This player is already added!');
+                }
+            });
+            
+            // Generate round robin matches
+            generateMatchesBtn.addEventListener('click', function() {
+                if (tournamentData.players.length < 2) {
+                    alert('You need at least 2 players to generate matches.');
+                    return;
+                }
+                
+                tournamentData.matches = []; // Clear existing matches
+                
+                // Generate all possible unique match combinations
+                for (let i = 0; i < tournamentData.players.length; i++) {
+                    for (let j = i + 1; j < tournamentData.players.length; j++) {
+                        tournamentData.matches.push({
+                            player1: tournamentData.players[i],
+                            player2: tournamentData.players[j],
+                            score1: null,
+                            score2: null,
+                            winner: null,
+                            completed: false
+                        });
+                    }
+                }
+                
+                renderMatches();
+                noScheduleMessage.style.display = 'none';
+                matchesTable.style.display = 'table';
+            });
+            
+            // Save tournament data to localStorage
+            saveDataBtn.addEventListener('click', function() {
+                tournamentData.name = tournamentNameInput.value.trim();
+                tournamentData.date = tournamentDateInput.value;
+                tournamentData.lastSaved = new Date().toISOString();
+                
+                localStorage.setItem('badmintonTournamentData', JSON.stringify(tournamentData));
+                alert('Tournament data saved to browser storage!');
+            });
+            
+            // Save to file using File System Access API
+            saveFileBtn.addEventListener('click', async function() {
+                try {
+                    tournamentData.name = tournamentNameInput.value.trim();
+                    tournamentData.date = tournamentDateInput.value;
+                    tournamentData.lastSaved = new Date().toISOString();
+                    
+                    const dataToSave = prepareExportData();
+                    const fileName = `badminton-tournament-${tournamentData.date || 'data'}.json`;
+                    const fileContent = JSON.stringify(dataToSave, null, 2);
+                    
+                    // Use existing file handle if we have one, otherwise prompt for new file
+                    if (!fileHandle) {
+                        fileHandle = await window.showSaveFilePicker({
+                            suggestedName: fileName,
+                            types: [{
+                                description: 'JSON Files',
+                                accept: {
+                                    'application/json': ['.json'],
+                                },
+                            }],
+                        });
+                    }
+                    
+                    // Create a FileSystemWritableFileStream to write to
+                    const writableStream = await fileHandle.createWritable();
+                    await writableStream.write(fileContent);
+                    await writableStream.close();
+                    
+                    // Update UI with current file info
+                    currentFilename.textContent = fileHandle.name;
+                    fileHandleInfo.style.display = 'block';
+                    
+                    alert(`Tournament data saved to ${fileHandle.name}`);
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        return; // User cancelled the save
+                    }
+                    console.error("File save error:", error);
+                    alert("Failed to save file: " + error.message);
+                }
+            });
+            
+            // Load from file using File System Access API
+            loadFileBtn.addEventListener('click', async function() {
+                try {
+                    // Open file picker
+                    [fileHandle] = await window.showOpenFilePicker({
+                        types: [{
+                            description: 'JSON Files',
+                            accept: {
+                                'application/json': ['.json'],
+                            },
+                        }],
+                        multiple: false
+                    });
+                    
+                    // Get file contents
+                    const file = await fileHandle.getFile();
+                    const contents = await file.text();
+                    const fileData = JSON.parse(contents);
+                    
+                    // Update UI with current file info
+                    currentFilename.textContent = fileHandle.name;
+                    fileHandleInfo.style.display = 'block';
+                    
+                    // Load the data
+                    loadTournamentData(fileData);
+                    
+                    alert(`Tournament data loaded from ${fileHandle.name}`);
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        return; // User cancelled the open
+                    }
+                    console.error("File load error:", error);
+                    alert("Failed to load file: " + error.message);
+                }
+            });
+            
+            // Export data as JSON (download)
+            exportJsonBtn.addEventListener('click', function() {
+                const dataToExport = prepareExportData();
+                const dataStr = JSON.stringify(dataToExport, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `badminton-tournament-${tournamentData.date || 'data'}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            });
+            
+            // Export data as CSV (download)
+            exportCsvBtn.addEventListener('click', function() {
+                const dataToExport = prepareExportData();
+                let csvContent = '';
+                
+                // Tournament info
+                csvContent += `Tournament Name,${dataToExport.name}\n`;
+                csvContent += `Date,${dataToExport.date}\n\n`;
+                
+                // Players
+                csvContent += 'Players\n';
+                dataToExport.players.forEach(player => {
+                    csvContent += `${player}\n`;
+                });
+                csvContent += '\n';
+                
+                // Matches
+                csvContent += 'Matches\n';
+                csvContent += 'Match,Player 1,Player 2,Score,Winner\n';
+                dataToExport.matches.forEach((match, index) => {
+                    const score = match.score1 !== null && match.score2 !== null ? 
+                        `${match.score1}-${match.score2}` : 'Not played';
+                    csvContent += `${index + 1},${match.player1},${match.player2},${score},${match.winner || '-'}\n`;
+                });
+                csvContent += '\n';
+                
+                // Standings
+                if (dataToExport.standings && dataToExport.standings.length > 0) {
+                    csvContent += 'Standings\n';
+                    csvContent += 'Rank,Player,Wins,Losses,Points\n';
+                    dataToExport.standings.forEach((standing, index) => {
+                        csvContent += `${index + 1},${standing.player},${standing.wins},${standing.losses},${standing.points}\n`;
+                    });
+                }
+                
+                const exportFileDefaultName = `badminton-tournament-${tournamentData.date || 'data'}.csv`;
+                const dataUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            });
+            
+            // Clear all data
+            clearDataBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all tournament data? This cannot be undone.')) {
+                    localStorage.removeItem('badmintonTournamentData');
+                    tournamentData.name = '';
+                    tournamentData.date = new Date().toISOString().split('T')[0];
+                    tournamentData.players = [];
+                    tournamentData.matches = [];
+                    tournamentData.lastSaved = null;
+                    fileHandle = null;
+                    
+                    tournamentNameInput.value = '';
+                    tournamentDateInput.value = tournamentData.date;
+                    noPlayersMessage.style.display = 'block';
+                    playersContainer.innerHTML = '';
+                    playersContainer.appendChild(noPlayersMessage);
+                    noScheduleMessage.style.display = 'block';
+                    matchesTable.style.display = 'none';
+                    noStatsMessage.style.display = 'block';
+                    statsContent.style.display = 'none';
+                    fileHandleInfo.style.display = 'none';
+                    
+                    alert('All data has been cleared.');
+                }
+            });
+            
+            // Load tournament data from file or object
+            function loadTournamentData(data) {
+                tournamentData.name = data.name || '';
+                tournamentData.date = data.date || new Date().toISOString().split('T')[0];
+                tournamentData.players = data.players || [];
+                tournamentData.matches = data.matches || [];
+                tournamentData.lastSaved = data.lastSaved || null;
+                
+                tournamentNameInput.value = tournamentData.name;
+                tournamentDateInput.value = tournamentData.date;
+                
+                renderPlayers();
+                
+                if (tournamentData.matches.length > 0) {
+                    renderMatches();
+                    noScheduleMessage.style.display = 'none';
+                    matchesTable.style.display = 'table';
+                    updateStatistics();
+                }
+            }
+            
+            // Render players list
+            function renderPlayers() {
+                if (tournamentData.players.length === 0) {
+                    noPlayersMessage.style.display = 'block';
+                    playersContainer.innerHTML = '';
+                    playersContainer.appendChild(noPlayersMessage);
+                    return;
+                }
+                
+                noPlayersMessage.style.display = 'none';
+                playersContainer.innerHTML = '';
+                
+                tournamentData.players.forEach((player, index) => {
+                    const playerCard = document.createElement('div');
+                    playerCard.className = 'player-card';
+                    
+                    const playerName = document.createElement('span');
+                    playerName.textContent = player;
+                    
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = 'Remove';
+                    deleteBtn.className = 'btn-danger';
+                    deleteBtn.style.width = 'auto';
+                    deleteBtn.style.padding = '8px 12px';
+                    deleteBtn.addEventListener('click', function() {
+                        tournamentData.players.splice(index, 1);
+                        // Also remove any matches involving this player
+                        tournamentData.matches = tournamentData.matches.filter(m => 
+                            m.player1 !== player && m.player2 !== player
+                        );
+                        renderPlayers();
+                        renderMatches();
+                        updateStatistics();
+                    });
+                    
+                    playerCard.appendChild(playerName);
+                    playerCard.appendChild(deleteBtn);
+                    playersContainer.appendChild(playerCard);
+                });
+            }
+            
+            // Render matches schedule
+            function renderMatches() {
+                matchesBody.innerHTML = '';
+                
+                tournamentData.matches.forEach((match, index) => {
+                    const row = document.createElement('tr');
+                    
+                    // Match number
+                    const matchCell = document.createElement('td');
+                    matchCell.textContent = index + 1;
+                    row.appendChild(matchCell);
+                    
+                    // Player 1
+                    const player1Cell = document.createElement('td');
+                    player1Cell.textContent = match.player1;
+                    row.appendChild(player1Cell);
+                    
+                    // Player 2
+                    const player2Cell = document.createElement('td');
+                    player2Cell.textContent = match.player2;
+                    row.appendChild(player2Cell);
+                    
+                    // Score input
+                    const scoreCell = document.createElement('td');
+                    const scoreDiv = document.createElement('div');
+                    scoreDiv.className = 'match-score';
+                    
+                    const score1Input = document.createElement('input');
+                    score1Input.type = 'number';
+                    score1Input.min = '0';
+                    score1Input.placeholder = '0';
+                    score1Input.value = match.score1 !== null ? match.score1 : '';
+                    score1Input.addEventListener('change', function() {
+                        match.score1 = parseInt(this.value) || null;
+                        match.completed = match.score1 !== null && match.score2 !== null;
+                        updateMatchWinner(match);
+                        renderMatches();
+                        updateStatistics();
+                    });
+                    
+                    const vsSpan = document.createElement('span');
+                    vsSpan.textContent = 'vs';
+                    
+                    const score2Input = document.createElement('input');
+                    score2Input.type = 'number';
+                    score2Input.min = '0';
+                    score2Input.placeholder = '0';
+                    score2Input.value = match.score2 !== null ? match.score2 : '';
+                    score2Input.addEventListener('change', function() {
+                        match.score2 = parseInt(this.value) || null;
+                        match.completed = match.score1 !== null && match.score2 !== null;
+                        updateMatchWinner(match);
+                        renderMatches();
+                        updateStatistics();
+                    });
+                    
+                    scoreDiv.appendChild(score1Input);
+                    scoreDiv.appendChild(vsSpan);
+                    scoreDiv.appendChild(score2Input);
+                    scoreCell.appendChild(scoreDiv);
+                    row.appendChild(scoreCell);
+                    
+                    // Winner display
+                    const winnerCell = document.createElement('td');
+                    if (match.winner) {
+                        winnerCell.textContent = match.winner;
+                        winnerCell.className = 'winner';
+                    } else {
+                        winnerCell.textContent = 'Pending';
+                    }
+                    row.appendChild(winnerCell);
+                    
+                    // Actions
+                    const actionsCell = document.createElement('td');
+                    const clearBtn = document.createElement('button');
+                    clearBtn.textContent = 'Clear';
+                    clearBtn.className = 'btn-danger';
+                    clearBtn.style.width = 'auto';
+                    clearBtn.style.padding = '8px 12px';
+                    clearBtn.addEventListener('click', function() {
+                        match.score1 = null;
+                        match.score2 = null;
+                        match.winner = null;
+                        match.completed = false;
+                        renderMatches();
+                        updateStatistics();
+                    });
+                    actionsCell.appendChild(clearBtn);
+                    row.appendChild(actionsCell);
+                    
+                    matchesBody.appendChild(row);
+                });
+            }
+            
+            // Update match winner based on scores
+            function updateMatchWinner(match) {
+                if (match.score1 !== null && match.score2 !== null) {
+                    if (match.score1 > match.score2) {
+                        match.winner = match.player1;
+                    } else if (match.score2 > match.score1) {
+                        match.winner = match.player2;
+                    } else {
+                        match.winner = 'Draw';
+                    }
+                } else {
+                    match.winner = null;
+                }
+            }
+            
+            // Update tournament statistics
+            function updateStatistics() {
+                const completedMatches = tournamentData.matches.filter(m => m.completed);
+                
+                if (completedMatches.length === 0) {
+                    noStatsMessage.style.display = 'block';
+                    statsContent.style.display = 'none';
+                    return;
+                }
+                
+                noStatsMessage.style.display = 'none';
+                statsContent.style.display = 'block';
+                
+                // Calculate standings
+                const standings = {};
+                tournamentData.players.forEach(player => {
+                    standings[player] = {
+                        wins: 0,
+                        losses: 0,
+                        points: 0
+                    };
+                });
+                
+                completedMatches.forEach(match => {
+                    if (match.winner === match.player1) {
+                        standings[match.player1].wins++;
+                        standings[match.player1].points += 2;
+                        standings[match.player2].losses++;
+                    } else if (match.winner === match.player2) {
+                        standings[match.player2].wins++;
+                        standings[match.player2].points += 2;
+                        standings[match.player1].losses++;
+                    } else if (match.winner === 'Draw') {
+                        standings[match.player1].points += 1;
+                        standings[match.player2].points += 1;
+                    }
+                });
+                
+                // Convert standings to array and sort
+                const standingsArray = Object.keys(standings).map(player => {
+                    return {
+                        player,
+                        wins: standings[player].wins,
+                        losses: standings[player].losses,
+                        points: standings[player].points
+                    };
+                });
+                
+                standingsArray.sort((a, b) => {
+                    if (b.points !== a.points) return b.points - a.points;
+                    if (b.wins !== a.wins) return b.wins - a.wins;
+                    return a.losses - b.losses;
+                });
+                
+                // Render standings
+                standingsBody.innerHTML = '';
+                standingsArray.forEach((player, index) => {
+                    const row = document.createElement('tr');
+                    
+                    const rankCell = document.createElement('td');
+                    rankCell.textContent = index + 1;
+                    row.appendChild(rankCell);
+                    
+                    const playerCell = document.createElement('td');
+                    playerCell.textContent = player.player;
+                    row.appendChild(playerCell);
+                    
+                    const winsCell = document.createElement('td');
+                    winsCell.textContent = player.wins;
+                    row.appendChild(winsCell);
+                    
+                    const lossesCell = document.createElement('td');
+                    lossesCell.textContent = player.losses;
+                    row.appendChild(lossesCell);
+                    
+                    const pointsCell = document.createElement('td');
+                    pointsCell.textContent = player.points;
+                    row.appendChild(pointsCell);
+                    
+                    standingsBody.appendChild(row);
+                });
+                
+                // Render match results
+                resultsBody.innerHTML = '';
+                tournamentData.players.forEach(player => {
+                    const row = document.createElement('tr');
+                    
+                    const playerCell = document.createElement('td');
+                    playerCell.textContent = player;
+                    row.appendChild(playerCell);
+                    
+                    const winsCell = document.createElement('td');
+                    winsCell.textContent = standings[player].wins;
+                    row.appendChild(winsCell);
+                    
+                    const lossesCell = document.createElement('td');
+                    lossesCell.textContent = standings[player].losses;
+                    row.appendChild(lossesCell);
+                    
+                    resultsBody.appendChild(row);
+                });
+                
+                // Render head-to-head results
+                headToHeadBody.innerHTML = '';
+                completedMatches.forEach(match => {
+                    const row = document.createElement('tr');
+                    
+                    const playersCell = document.createElement('td');
+                    playersCell.textContent = `${match.player1} vs ${match.player2}`;
+                    row.appendChild(playersCell);
+                    
+                    const winnerCell = document.createElement('td');
+                    winnerCell.textContent = match.winner === 'Draw' ? 'Draw' : match.winner;
+                    if (match.winner !== 'Draw') winnerCell.className = 'winner';
+                    row.appendChild(winnerCell);
+                    
+                    const scoreCell = document.createElement('td');
+                    scoreCell.textContent = `${match.score1} - ${match.score2}`;
+                    row.appendChild(scoreCell);
+                    
+                    headToHeadBody.appendChild(row);
+                });
+            }
+            
+            // Load saved data from localStorage
+            function loadSavedData() {
+                const savedData = localStorage.getItem('badmintonTournamentData');
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    
+                    tournamentData.name = parsedData.name || '';
+                    tournamentData.date = parsedData.date || new Date().toISOString().split('T')[0];
+                    tournamentData.players = parsedData.players || [];
+                    tournamentData.matches = parsedData.matches || [];
+                    tournamentData.lastSaved = parsedData.lastSaved || null;
+                    
+                    tournamentNameInput.value = tournamentData.name;
+                    tournamentDateInput.value = tournamentData.date;
+                    
+                    renderPlayers();
+                    
+                    if (tournamentData.matches.length > 0) {
+                        renderMatches();
+                        noScheduleMessage.style.display = 'none';
+                        matchesTable.style.display = 'table';
+                        updateStatistics();
+                    }
+                }
+            }
+            
+            // Prepare data for export
+            function prepareExportData() {
+                const standings = {};
+                tournamentData.players.forEach(player => {
+                    standings[player] = {
+                        wins: 0,
+                        losses: 0,
+                        points: 0
+                    };
+                });
+                
+                tournamentData.matches.forEach(match => {
+                    if (match.completed) {
+                        if (match.winner === match.player1) {
+                            standings[match.player1].wins++;
+                            standings[match.player1].points += 2;
+                            standings[match.player2].losses++;
+                        } else if (match.winner === match.player2) {
+                            standings[match.player2].wins++;
+                            standings[match.player2].points += 2;
+                            standings[match.player1].losses++;
+                        } else if (match.winner === 'Draw') {
+                            standings[match.player1].points += 1;
+                            standings[match.player2].points += 1;
+                        }
+                    }
+                });
+                
+                const standingsArray = Object.keys(standings).map(player => {
+                    return {
+                        player,
+                        wins: standings[player].wins,
+                        losses: standings[player].losses,
+                        points: standings[player].points
+                    };
+                });
+                
+                standingsArray.sort((a, b) => {
+                    if (b.points !== a.points) return b.points - a.points;
+                    if (b.wins !== a.wins) return b.wins - a.wins;
+                    return a.losses - b.losses;
+                });
+                
+                return {
+                    name: tournamentData.name,
+                    date: tournamentData.date,
+                    lastSaved: tournamentData.lastSaved,
+                    players: tournamentData.players,
+                    matches: tournamentData.matches,
+                    standings: standingsArray
+                };
+            }
+            
+            // Initial render
+            renderPlayers();
+        });
+    </script>
+</body>
+</html>

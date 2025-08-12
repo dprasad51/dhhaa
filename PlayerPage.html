@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badminton Player Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --secondary: #8338ec;
+            --accent: #ff006e;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #06d6a0;
+            --warning: #ffbe0b;
+            --danger: #ef476f;
+            --text: #e9ecef;
+            --text-light: #adb5bd;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --card-bg: #2b2d42;
+            --card-border: #3a3f58;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .central-nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 50px;
+            padding: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            z-index: 1000;
+        }
+        .nav-item {
+            position: relative;
+        }
+        .Dashboard {
+            color: rgba(255, 255, 255, 0.8) ;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            align-items: center;
+            display: flex;
+            gap: 8px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        .Dashboard:hover {
+            color:white;
+            background:  rgba(255, 255, 255, 0.15) ;
+        }
+
+        .player {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            align-items: center;
+            display: flex;
+            font-weight: 500;
+            font-size: 0.9rem;
+            gap: 8px;
+            border-radius: 50px;
+            transition: all 0.3 ease;
+        }
+        .player:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .Tournaments {
+             color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            align-items: center;
+            display: flex;
+            font-weight: 500;
+            font-size: 0.9rem;
+            gap: 8px;
+            border-radius: 50px;
+            transition: all 0.3 ease;
+        }
+        .Tournaments:hover{
+             color: white;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .Attendance {
+             color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            align-items: center;
+            display: flex;
+            font-weight: 500;
+            font-size: 0.9rem;
+            gap: 8px;
+            border-radius: 50px;
+            transition: all 0.3 ease;
+        }
+        .Attendance:hover {
+           color: white;
+            background: rgba(255, 255, 255, 0.15); 
+        }
+        .Statistics {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            align-items: center;
+            display: flex;
+            font-weight: 500;
+            font-size: 0.9rem;
+            gap: 8px;
+            border-radius: 50px;
+            transition: all 0.3 ease;
+        }
+        .Statistics:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .Settings {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            align-items: center;
+            display: flex;
+            font-weight: 500;
+            font-size: 0.9rem;
+            gap: 8px;
+            border-radius: 50px;
+            transition: all 0.3 ease;
+        }
+        .Settings:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-link.active {
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 5px 15px rgba(58, 134, 255, 0.4);
+        }
+        .nav-icon {
+            font-size: 1rem;
+        }
+
+        .container {
+            padding: 100px 2rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .header-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header p {
+             background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.8;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        .card-body {
+            padding: 2rem;
+            color: var(--text);
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -1rem;
+        }
+        
+        .form-group {
+            flex: 1 0 calc(33.333% - 2rem);
+            margin: 0 1rem 1.5rem;
+            min-width: 250px;
+        }
+        
+        .form-group.full-width {
+            flex: 1 0 calc(100% - 2rem);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: var(--text);
+        }
+        
+        select option {
+            background-color: var(--card-bg);
+            color: var(--text);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(255, 0, 110, 0.2);
+        }
+        
+        .photo-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem;
+            border: 2px dashed var(--card-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        .photo-upload:hover {
+            border-color: var(--accent);
+            background: rgba(255, 0, 110, 0.05);
+        }
+        
+        .photo-upload i {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        
+        .photo-upload p {
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        
+        .photo-upload small {
+            color: var(--text-light);
+        }
+        
+        .photo-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--card-border);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+            margin: 0 auto 1rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #495057;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #343a40;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #d33a5a;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .player-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary);
+        }
+        
+        .player-photo {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        .player-details {
+            padding: 1.5rem;
+        }
+        
+        .player-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        
+        .player-info {
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+        
+        .player-bio {
+            margin-top: 1rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .player-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--card-border);
+        }
+        
+        .no-players {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .add-player-btn-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        #playerFormCard {
+            display: none;
+        }
+
+        #playerFormCard.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .player-controls {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            font-size: 1rem;
+            min-width: 250px;
+            flex: 1;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: var(--text);
+        }
+
+        .filter-select {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            font-size: 1rem;
+            min-width: 200px;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: var(--text);
+        }
+
+        .filter-select option {
+            background-color: var(--card-bg);
+            color: var(--text);
+        }
+
+        .player-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .player-stats {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .stats-summary {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 1rem;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .form-group {
+                flex: 1 0 calc(50% - 2rem);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .form-group {
+                flex: 1 0 calc(100% - 2rem);
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+
+            .search-filter {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .search-input, .filter-select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+     <!-- Central Floating Navigation -->
+
+
+    <div class="container">
+        <div class="header">
+            <h1 class="header-title">Badminton Player Management</h1>
+            <p>Manage your team's player information with ease</p>
+        </div>
+        
+        <div class="add-player-btn-container">
+            <button id="toggleFormBtn" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Player
+            </button>
+        </div>
+        
+        <!-- Player Form Card (initially hidden) -->
+        <div id="playerFormCard" class="card">
+            <div class="card-header">
+                Add New Player
+            </div>
+            <div class="card-body">
+                <form id="playerForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dateOfBirth">Date of Birth</label>
+                            <input type="date" id="dateOfBirth" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nationality">Nationality</label>
+                            <input type="text" id="nationality" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="position">Playing Style</label>
+                            <select id="position" required>
+                                <option value="">Select Playing Style</option>
+                                <option value="Singles">Singles</option>
+                                <option value="Doubles">Doubles</option>
+                                <option value="Mixed Doubles">Mixed Doubles</option>
+                                <option value="All-Rounder">All-Rounder</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="jerseyNumber">Player Number</label>
+                            <input type="number" id="jerseyNumber" min="1" max="99">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="height">Height (cm)</label>
+                            <input type="number" id="height" min="140" max="220">
+                        </div>
+                        <div class="form-group">
+                            <label for="weight">Weight (kg)</label>
+                            <input type="number" id="weight" min="40" max="120">
+                        </div>
+                        <div class="form-group">
+                            <label for="strongFoot">Preferred Hand</label>
+                            <select id="strongFoot">
+                                <option value="Right">Right</option>
+                                <option value="Left">Left</option>
+                                <option value="Ambidextrous">Ambidextrous</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="bio">Player Biography</label>
+                            <textarea id="bio" rows="4"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label>Player Photo</label>
+                            <div class="photo-upload" id="photoUpload">
+                                <img id="photoPreview" class="photo-preview" alt="Preview">
+                                <i class="fas fa-camera"></i>
+                                <p>Click to upload player photo</p>
+                                <small>Recommended size: 500x500px (JPG/PNG)</small>
+                                <input type="file" id="playerPhoto" accept="image/*" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-secondary" id="resetBtn">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                        <button type="button" class="btn btn-danger" id="cancelBtn">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Player
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Player Roster Card (always visible) -->
+        <div class="card">
+            <div class="card-header">
+                Player Roster
+            </div>
+            <div class="card-body">
+                <!-- Player Statistics Summary -->
+                <div class="stats-summary">
+                    <div class="stat-card">
+                        <h3>Total Players</h3>
+                        <p id="totalPlayers">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Average Age</h3>
+                        <p id="averageAge">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>By Playing Style</h3>
+                        <div id="positionStats"></div>
+                    </div>
+                </div>
+
+                <!-- Player Controls (Search, Filter, Sort) -->
+                <div class="player-controls">
+                    <div class="search-filter">
+                        <input type="text" id="playerSearch" placeholder="Search players..." class="search-input">
+                        <select id="positionFilter" class="filter-select">
+                            <option value="">All Playing Styles</option>
+                            <option value="Singles">Singles</option>
+                            <option value="Doubles">Doubles</option>
+                            <option value="Mixed Doubles">Mixed Doubles</option>
+                            <option value="All-Rounder">All-Rounder</option>
+                        </select>
+                        <button id="sortByName" class="btn btn-secondary">
+                            <i class="fas fa-sort-alpha-down"></i> Sort by Name
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Players Grid -->
+                <div id="playersContainer">
+                    <div class="no-players">
+                        <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p>No players added yet. Start by adding a new player above.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const toggleFormBtn = document.getElementById('toggleFormBtn');
+            const playerFormCard = document.getElementById('playerFormCard');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const photoUpload = document.getElementById('photoUpload');
+            const playerPhoto = document.getElementById('playerPhoto');
+            const photoPreview = document.getElementById('photoPreview');
+            const playerForm = document.getElementById('playerForm');
+            const resetBtn = document.getElementById('resetBtn');
+            const playersContainer = document.getElementById('playersContainer');
+            const playerSearch = document.getElementById('playerSearch');
+            const positionFilter = document.getElementById('positionFilter');
+            const sortByNameBtn = document.getElementById('sortByName');
+
+            // Toggle form visibility
+            toggleFormBtn.addEventListener('click', function() {
+                playerFormCard.classList.toggle('show');
+                // Scroll to form if showing
+                if (playerFormCard.classList.contains('show')) {
+                    playerFormCard.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+
+            // Cancel button hides the form
+            cancelBtn.addEventListener('click', function() {
+                playerFormCard.classList.remove('show');
+                resetForm();
+            });
+
+            // Photo upload functionality
+            photoUpload.addEventListener('click', function() {
+                playerPhoto.click();
+            });
+
+            playerPhoto.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(event) {
+                        photoPreview.src = event.target.result;
+                        photoPreview.style.display = 'block';
+                        photoUpload.querySelector('i').style.display = 'none';
+                        photoUpload.querySelector('p').style.display = 'none';
+                        photoUpload.querySelector('small').style.display = 'none';
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Form submission
+            playerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                const dateOfBirth = document.getElementById('dateOfBirth').value;
+                const nationality = document.getElementById('nationality').value;
+                const position = document.getElementById('position').value;
+                const jerseyNumber = document.getElementById('jerseyNumber').value;
+                const height = document.getElementById('height').value;
+                const weight = document.getElementById('weight').value;
+                const strongFoot = document.getElementById('strongFoot').value;
+                const bio = document.getElementById('bio').value;
+                const photo = photoPreview.src;
+                
+                // Create player object
+                const player = {
+                    id: Date.now(),
+                    firstName,
+                    lastName,
+                    dateOfBirth,
+                    nationality,
+                    position,
+                    jerseyNumber,
+                    height,
+                    weight,
+                    strongFoot,
+                    bio,
+                    photo
+                };
+                
+                // Save to local storage
+                savePlayer(player);
+                
+                // Reset form and hide it
+                resetForm();
+                playerFormCard.classList.remove('show');
+                
+                // Refresh player list
+                displayPlayers();
+            });
+            
+            resetBtn.addEventListener('click', resetForm);
+            
+            function resetForm() {
+                playerForm.reset();
+                photoPreview.src = '';
+                photoPreview.style.display = 'none';
+                photoUpload.querySelector('i').style.display = 'block';
+                photoUpload.querySelector('p').style.display = 'block';
+                photoUpload.querySelector('small').style.display = 'block';
+            }
+            
+            function savePlayer(player) {
+                let players = JSON.parse(localStorage.getItem('players')) || [];
+                players.push(player);
+                localStorage.setItem('players', JSON.stringify(players));
+            }
+            
+            // Add event listeners for search, filter, and sort
+            playerSearch.addEventListener('input', displayPlayers);
+            positionFilter.addEventListener('change', displayPlayers);
+            sortByNameBtn.addEventListener('click', function() {
+                sortByNameBtn.classList.toggle('asc');
+                displayPlayers();
+            });
+
+            function displayPlayers() {
+                let players = JSON.parse(localStorage.getItem('players')) || [];
+                
+                // Filter players
+                const searchTerm = playerSearch.value.toLowerCase();
+                const positionFilterValue = positionFilter.value;
+                
+                if (searchTerm) {
+                    players = players.filter(player => 
+                        player.firstName.toLowerCase().includes(searchTerm) || 
+                        player.lastName.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                if (positionFilterValue) {
+                    players = players.filter(player => player.position === positionFilterValue);
+                }
+                
+                // Sort players
+                if (sortByNameBtn.classList.contains('asc')) {
+                    players.sort((a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`));
+                } else {
+                    players.sort((a, b) => `${b.firstName} ${b.lastName}`.localeCompare(`${a.firstName} ${a.lastName}`));
+                }
+                
+                if (players.length === 0) {
+                    playersContainer.innerHTML = `
+                        <div class="no-players">
+                            <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p>No players found matching your criteria.</p>
+                        </div>
+                    `;
+                    updateStatistics(players);
+                    return;
+                }
+                
+                let html = '<div class="players-grid">';
+                
+                players.forEach(player => {
+                    const dob = new Date(player.dateOfBirth);
+                    const age = calculateAge(dob);
+                    
+                    html += `
+                        <div class="player-card" data-id="${player.id}">
+                            <div class="player-badge">${player.position}</div>
+                            <img src="${player.photo || 'https://via.placeholder.com/300x200?text=No+Photo'}" alt="${player.firstName} ${player.lastName}" class="player-photo">
+                            <div class="player-details">
+                                <h3 class="player-name">${player.firstName} ${player.lastName}</h3>
+                                <p class="player-info"><i class="fas fa-hashtag"></i> ${player.jerseyNumber || 'N/A'}</p>
+                                <p class="player-info"><i class="fas fa-birthday-cake"></i> ${age} years</p>
+                                <p class="player-info"><i class="fas fa-globe"></i> ${player.nationality || 'N/A'}</p>
+                                <div class="player-stats">
+                                    <span class="stat-item"><i class="fas fa-ruler-vertical"></i> ${player.height || 'N/A'}cm</span>
+                                    <span class="stat-item"><i class="fas fa-weight"></i> ${player.weight || 'N/A'}kg</span>
+                                    <span class="stat-item"><i class="fas fa-hand-paper"></i> ${player.strongFoot}</span>
+                                </div>
+                                ${player.bio ? `<div class="player-bio">${player.bio}</div>` : ''}
+                                <div class="player-actions">
+                                    <button class="btn btn-secondary edit-btn" data-id="${player.id}">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-danger delete-btn" data-id="${player.id}">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                playersContainer.innerHTML = html;
+                
+                // Update statistics
+                updateStatistics(players);
+                
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        deletePlayer(id);
+                    });
+                });
+                
+                // Add event listeners to edit buttons
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        editPlayer(id);
+                    });
+                });
+            }
+            
+            function deletePlayer(id) {
+                if (confirm('Are you sure you want to delete this player?')) {
+                    let players = JSON.parse(localStorage.getItem('players')) || [];
+                    players = players.filter(player => player.id !== id);
+                    localStorage.setItem('players', JSON.stringify(players));
+                    displayPlayers();
+                }
+            }
+            
+            function editPlayer(id) {
+                const players = JSON.parse(localStorage.getItem('players')) || [];
+                const player = players.find(p => p.id === id);
+                
+                if (!player) return;
+                
+                // Fill the form with player data
+                document.getElementById('firstName').value = player.firstName;
+                document.getElementById('lastName').value = player.lastName;
+                document.getElementById('dateOfBirth').value = player.dateOfBirth;
+                document.getElementById('nationality').value = player.nationality;
+                document.getElementById('position').value = player.position;
+                document.getElementById('jerseyNumber').value = player.jerseyNumber;
+                document.getElementById('height').value = player.height;
+                document.getElementById('weight').value = player.weight;
+                document.getElementById('strongFoot').value = player.strongFoot;
+                document.getElementById('bio').value = player.bio;
+                
+                if (player.photo) {
+                    photoPreview.src = player.photo;
+                    photoPreview.style.display = 'block';
+                    photoUpload.querySelector('i').style.display = 'none';
+                    photoUpload.querySelector('p').style.display = 'none';
+                    photoUpload.querySelector('small').style.display = 'none';
+                }
+                
+                // Show the form
+                playerFormCard.classList.add('show');
+                
+                // Remove the player from storage (will be re-added if form is submitted)
+                deletePlayer(id);
+                
+                // Scroll to form
+                playerFormCard.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            function calculateAge(dob) {
+                const diff = Date.now() - dob.getTime();
+                const ageDate = new Date(diff);
+                return Math.abs(ageDate.getUTCFullYear() - 1970);
+            }
+            
+            function updateStatistics(players) {
+                document.getElementById('totalPlayers').textContent = players.length;
+                
+                if (players.length > 0) {
+                    const totalAge = players.reduce((sum, player) => {
+                        const dob = new Date(player.dateOfBirth);
+                        return sum + calculateAge(dob);
+                    }, 0);
+                    document.getElementById('averageAge').textContent = (totalAge / players.length).toFixed(1);
+                    
+                    // Position stats
+                    const positionCounts = {};
+                    players.forEach(player => {
+                        positionCounts[player.position] = (positionCounts[player.position] || 0) + 1;
+                    });
+                    
+                    let positionHtml = '';
+                    for (const [position, count] of Object.entries(positionCounts)) {
+                        positionHtml += `<div>${position}: ${count}</div>`;
+                    }
+                    document.getElementById('positionStats').innerHTML = positionHtml;
+                } else {
+                    document.getElementById('averageAge').textContent = '0';
+                    document.getElementById('positionStats').innerHTML = '<div>No players</div>';
+                }
+            }
+            
+            // Initial display of players
+            displayPlayers();
+        });
+    </script>
+</body>
+</html>
